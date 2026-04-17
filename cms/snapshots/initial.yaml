@@ -1,0 +1,190 @@
+# ════════════════════════════════════════════════════════════════════════════
+# Schéma Directus initial — Observatoire Prospective Atlas
+# ════════════════════════════════════════════════════════════════════════════
+# Ce fichier décrit le schéma attendu pour les collections principales.
+# Ce n'est PAS un snapshot Directus directement importable — il sert de
+# référence pour créer les collections dans l'UI Directus, OU pour être
+# transformé en snapshot YAML Directus officiel après la première création.
+#
+# Pour générer un snapshot Directus depuis l'UI (une fois les collections créées) :
+#   docker compose exec directus npx directus schema snapshot /directus/snapshots/v1.yaml
+#
+# Pour appliquer un snapshot :
+#   docker compose exec directus npx directus schema apply /directus/snapshots/v1.yaml
+# ════════════════════════════════════════════════════════════════════════════
+
+version: 1
+directus_version: "11.x"
+description: >
+  Schéma initial Observatoire — métiers, compétences, études, branches, actualités,
+  datasets pour dataviz.
+
+collections:
+
+  # ──────────────────────────────────────────────────────────────
+  # BRANCHE
+  # ──────────────────────────────────────────────────────────────
+  - name: branche
+    icon: layers
+    note: Branche professionnelle accompagnée par OPCO Atlas
+    fields:
+      - { field: id, type: uuid, primary: true }
+      - { field: code, type: string, required: true, note: "ex: BANQUE, ASSURANCE" }
+      - { field: libelle, type: string, required: true }
+      - { field: idcc, type: string, note: "Code IDCC (ex: 1672, 2120)" }
+      - { field: description, type: text, interface: input-rich-text-md }
+      - { field: effectifs_salaries, type: integer }
+      - { field: nb_entreprises, type: integer }
+      - { field: date_created, type: timestamp, special: [date-created] }
+      - { field: date_updated, type: timestamp, special: [date-updated] }
+
+  # ──────────────────────────────────────────────────────────────
+  # FAMILLE MÉTIER
+  # ──────────────────────────────────────────────────────────────
+  - name: famille_metier
+    icon: folder
+    note: Famille de métiers (groupement éditorial)
+    fields:
+      - { field: id, type: uuid, primary: true }
+      - { field: code, type: string, required: true, note: "ex: F07, F12" }
+      - { field: libelle, type: string, required: true }
+      - { field: icon, type: string, note: "Nom lucide icon (ex: cog, bar-chart-3)" }
+      - { field: ordre, type: integer, default: 100 }
+
+  # ──────────────────────────────────────────────────────────────
+  # MÉTIER
+  # ──────────────────────────────────────────────────────────────
+  - name: metier
+    icon: briefcase
+    note: Fiche métier
+    fields:
+      - { field: id, type: uuid, primary: true }
+      - { field: status, type: string, special: [cast-string], interface: select-dropdown, options: { choices: [draft, review, published, archived] }, default: draft }
+      - { field: slug, type: string, required: true, note: "URL friendly, unique" }
+      - { field: libelle, type: string, required: true }
+      - { field: code_rome, type: string, note: "ex: I1304" }
+      - { field: famille, type: uuid, relation: famille_metier }
+      - { field: branches, type: m2m, relation: branche, note: "Branches où le métier existe" }
+      - { field: resume, type: text }
+      - { field: description, type: text, interface: input-rich-text-md, note: "Markdown enrichi" }
+      - { field: missions, type: json, note: "Tableau de missions (bullet points)" }
+      - { field: tension, type: string, interface: select-dropdown, options: { choices: [tension, emergent, stable, prospect] } }
+      - { field: effectifs, type: integer }
+      - { field: salaire_median, type: decimal }
+      - { field: indice_tension, type: decimal }
+      - { field: competences, type: m2m, relation: competence, junction: metier_competence, note: "Avec niveau requis" }
+      - { field: formations, type: json, note: "Liste de formations (CQP, BTS, Bachelor…)" }
+      - { field: etudes_liees, type: m2m, relation: etude }
+      - { field: metiers_proches, type: m2m, relation: metier, note: "Auto-relation" }
+      - { field: tendances, type: text, interface: input-rich-text-md }
+      - { field: ressources, type: json, note: "Liens externes, vidéos, interviews" }
+      - { field: date_created, type: timestamp, special: [date-created] }
+      - { field: date_updated, type: timestamp, special: [date-updated] }
+      - { field: user_updated, type: uuid, relation: directus_users, special: [user-updated] }
+
+  # ──────────────────────────────────────────────────────────────
+  # COMPÉTENCE
+  # ──────────────────────────────────────────────────────────────
+  - name: competence
+    icon: award
+    fields:
+      - { field: id, type: uuid, primary: true }
+      - { field: code, type: string, note: "ex: CYBER-OT, DIAG-IA" }
+      - { field: libelle, type: string, required: true }
+      - { field: type, type: string, interface: select-dropdown, options: { choices: [technique, comportementale, transverse] } }
+      - { field: description, type: text }
+
+  # Table de jonction métier ↔ compétence avec niveau
+  - name: metier_competence
+    icon: link
+    hidden: true
+    fields:
+      - { field: id, type: uuid, primary: true }
+      - { field: metier, type: uuid, relation: metier }
+      - { field: competence, type: uuid, relation: competence }
+      - { field: niveau, type: string, interface: select-dropdown, options: { choices: [emergent, intermediaire, confirme, expert] } }
+      - { field: niveau_value, type: integer, note: "0-100 pour la barre de progression" }
+
+  # ──────────────────────────────────────────────────────────────
+  # ÉTUDE
+  # ──────────────────────────────────────────────────────────────
+  - name: etude
+    icon: file_open
+    fields:
+      - { field: id, type: uuid, primary: true }
+      - { field: status, type: string, interface: select-dropdown, options: { choices: [draft, review, published, archived] }, default: draft }
+      - { field: numero, type: string, note: "ex: N°26.04" }
+      - { field: titre, type: string, required: true }
+      - { field: resume, type: text }
+      - { field: corps, type: text, interface: input-rich-text-md }
+      - { field: type_publi, type: string, interface: select-dropdown, options: { choices: [prospective, enquete, barometre, cartographie, note] } }
+      - { field: branche, type: uuid, relation: branche }
+      - { field: tags, type: csv, interface: tags, note: "Thématiques libres" }
+      - { field: date_publi, type: date }
+      - { field: fichier_pdf, type: uuid, relation: directus_files }
+      - { field: fichier_excel, type: uuid, relation: directus_files }
+      - { field: fichier_synthese, type: uuid, relation: directus_files }
+      - { field: datasets, type: m2m, relation: dataset }
+      - { field: cover_variant, type: string, interface: select-dropdown, options: { choices: [green, purple, olive, deep] }, default: green }
+      - { field: cover_letter, type: string, note: "1 char affiché en filigrane" }
+      - { field: nb_telechargements, type: integer, default: 0, readonly: true }
+
+  # ──────────────────────────────────────────────────────────────
+  # ACTUALITÉ
+  # ──────────────────────────────────────────────────────────────
+  - name: actualite
+    icon: newspaper
+    fields:
+      - { field: id, type: uuid, primary: true }
+      - { field: status, type: string, interface: select-dropdown, options: { choices: [draft, review, published, archived] }, default: draft }
+      - { field: titre, type: string, required: true }
+      - { field: slug, type: string }
+      - { field: corps, type: text, interface: input-rich-text-md }
+      - { field: type_source, type: string, interface: select-dropdown, options: { choices: [redige, rss, partenaire] } }
+      - { field: source_url, type: string }
+      - { field: branche, type: uuid, relation: branche }
+      - { field: metier_cite, type: uuid, relation: metier }
+      - { field: etude_citee, type: uuid, relation: etude }
+      - { field: date_publi, type: timestamp }
+
+  # ──────────────────────────────────────────────────────────────
+  # DATASET (pour dataviz)
+  # ──────────────────────────────────────────────────────────────
+  - name: dataset
+    icon: analytics
+    note: Jeu de données issu d'Excel, API externe, ou déclaratif branche
+    fields:
+      - { field: id, type: uuid, primary: true }
+      - { field: code, type: string, required: true, note: "ex: TENSION-T1-2026" }
+      - { field: libelle, type: string, required: true }
+      - { field: description, type: text }
+      - { field: source, type: string, note: "INSEE, France Travail, Déclaratif branche…" }
+      - { field: licence, type: string, default: "Etalab 2.0" }
+      - { field: periode, type: string, note: "ex: T1 2026, 2022-2026" }
+      - { field: schema, type: json, note: "Schéma des colonnes (noms, types)" }
+      - { field: donnees, type: json, note: "Les données elles-mêmes (tableau d'objets)" }
+      - { field: fichier_source, type: uuid, relation: directus_files }
+      - { field: derniere_maj, type: timestamp }
+
+# ═════════ PERMISSIONS SUGGÉRÉES ═════════
+# À configurer dans l'UI Directus > Settings > Roles & Permissions
+roles:
+  - name: Contributeur branche
+    description: Peut créer des métiers/études en draft, modifier ses propres éléments
+    permissions:
+      - collection: metier
+        action: [create, read, update_own]
+        status_filter: [draft]
+      - collection: etude
+        action: [create, read, update_own]
+        status_filter: [draft]
+  - name: Relecteur
+    description: Peut valider et publier les drafts
+    permissions:
+      - collection: metier
+        action: [read, update]
+      - collection: etude
+        action: [read, update]
+  - name: Administrateur
+    description: Accès complet au schéma et aux permissions
+    permissions: [all]

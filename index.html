@@ -1,0 +1,860 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Observatoire · Prospective Atlas — Maquette DA</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet" />
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+<style>
+/* ═══════════════════════════════════════════════════════════════
+   Charte Prospective Atlas — voir DESIGN.md
+   Pour passer à Circular Std : remplacer 'Syne' par 'Circular Std'
+   ═══════════════════════════════════════════════════════════════ */
+:root {
+  --purple:#2D0F64; --purple-lt:#EEE8FA;
+  --green:#004423; --green-v:#5FB670; --green-lt:#EAF5ED; --green-tag:#E8F7EC;
+  --white:#FFFFFF; --off:#F7F6F3;
+  --border:#E2E0DB; --border-soft:#EFEDE7;
+  --text:#1A1A1A; --text-2:#3A3A3A; --muted:#6B6868; --muted-2:#9A9794;
+  --tension:#C94A3D; --tension-bg:#FBEDEB;
+  --emergent:#C87A2B; --emergent-bg:#FBF1E4;
+  --prospect:#2D0F64; --prospect-bg:#EEE8FA;
+  --radius-sm:10px; --radius-md:16px; --radius-lg:20px; --radius-pill:2rem;
+  --shadow-card:0 4px 20px rgba(0,68,35,.06);
+  --shadow-event:0 4px 24px rgba(0,68,35,.08);
+  --shadow-hover:0 12px 40px rgba(0,68,35,.12);
+  --ease:cubic-bezier(.4,0,.2,1); --dur:200ms;
+  --font-display:'Outfit','Circular Std','Helvetica Neue',sans-serif;
+  --font-body:'DM Sans',-apple-system,'Helvetica Neue',sans-serif;
+}
+*,*::before,*::after { box-sizing:border-box; margin:0; padding:0; }
+html { scroll-behavior:smooth; }
+body {
+  background:var(--white); color:var(--text);
+  font-family:var(--font-body); font-weight:400; line-height:1.65;
+  -webkit-font-smoothing:antialiased;
+  overflow-x:hidden;
+}
+a { color:inherit; text-decoration:none; }
+img, svg { display:block; max-width:100%; }
+button { font-family:inherit; cursor:pointer; border:0; background:none; }
+
+/* ───── NAV ───── */
+nav {
+  position:sticky; top:0; z-index:200;
+  background:var(--white); border-bottom:1.5px solid var(--border);
+  display:flex; align-items:center; justify-content:space-between;
+  padding:0 3rem; height:72px;
+}
+.nav-left { display:flex; align-items:center; gap:1.25rem; }
+.atlas-mark {
+  display:flex; align-items:center; gap:0.6rem;
+  font-family:var(--font-display); font-weight:800;
+  color:var(--purple); font-size:1.3rem; letter-spacing:-0.02em;
+}
+.atlas-mark::before {
+  content:""; width:30px; height:30px; border-radius:6px;
+  background:var(--purple);
+  display:inline-block;
+  mask: radial-gradient(circle at 50% 15%, transparent 11%, #000 12%) 50% 0 / 100% 75% no-repeat,
+        linear-gradient(#000,#000) 50% 75% / 100% 25% no-repeat;
+  -webkit-mask: radial-gradient(circle at 50% 15%, transparent 11%, #000 12%) 50% 0 / 100% 75% no-repeat,
+                linear-gradient(#000,#000) 50% 75% / 100% 25% no-repeat;
+}
+.nav-divider { width:1px; height:32px; background:var(--border); }
+.nav-prospective {
+  font-family:var(--font-display); font-size:0.85rem; font-weight:700;
+  letter-spacing:0.04em; color:var(--green); text-transform:uppercase;
+}
+.nav-links { display:flex; gap:2.5rem; list-style:none; }
+@media (max-width:960px) { .nav-links { display:none; } }
+.nav-links a {
+  font-size:0.88rem; color:var(--muted);
+  transition:color var(--dur) var(--ease);
+  padding:4px 2px;
+}
+.nav-links a:hover, .nav-links a.active { color:var(--green); }
+.nav-right { display:flex; align-items:center; gap:1rem; }
+.search-trigger {
+  display:flex; align-items:center; gap:0.6rem;
+  padding:0.5rem 0.9rem; min-width:200px;
+  background:var(--off); border:1px solid var(--border);
+  border-radius:var(--radius-pill);
+  font-size:0.82rem; color:var(--muted);
+  transition:all var(--dur) var(--ease);
+}
+.search-trigger:hover { border-color:var(--green-v); color:var(--green); background:var(--white); }
+.search-trigger kbd {
+  margin-left:auto; padding:2px 6px;
+  font:600 0.7rem/1 var(--font-body);
+  background:var(--white); border:1px solid var(--border);
+  border-radius:4px; color:var(--muted);
+}
+.nav-badge {
+  background:var(--green-v); color:var(--white);
+  font-family:var(--font-display); font-size:0.72rem; font-weight:700;
+  letter-spacing:0.06em;
+  padding:0.35rem 0.9rem; border-radius:var(--radius-pill);
+}
+
+/* ───── HERO ───── */
+.hero {
+  background:var(--green); position:relative; overflow:hidden;
+  padding:6rem 3rem 0;
+}
+.hero::before {
+  content:'O'; position:absolute; right:-4rem; top:-6rem;
+  font-family:var(--font-display); font-size:44vw; font-weight:800;
+  color:rgba(255,255,255,.04); line-height:1;
+  pointer-events:none; user-select:none;
+}
+.hero-inner { position:relative; max-width:1200px; margin:0 auto; }
+.hero-eyebrow { display:flex; align-items:center; gap:0.75rem; margin-bottom:2.5rem; flex-wrap:wrap; }
+.hero-eyebrow > span:not(.hero-pill) { font-size:0.82rem; color:rgba(255,255,255,.55); }
+.hero-pill {
+  background:rgba(95,182,112,.2);
+  border:1px solid rgba(95,182,112,.4);
+  color:var(--green-v);
+  font-family:var(--font-display); font-size:0.72rem; font-weight:700;
+  letter-spacing:0.1em; text-transform:uppercase;
+  padding:0.3rem 0.8rem; border-radius:var(--radius-pill);
+}
+.hero-title {
+  font-family:var(--font-display);
+  font-size:clamp(3.5rem,10vw,8rem); font-weight:800; line-height:.95;
+  color:var(--white); letter-spacing:-0.02em; margin-bottom:1.5rem;
+}
+.hero-title .accent { color:var(--green-v); }
+.hero-sub {
+  font-size:clamp(1.05rem,2vw,1.35rem); font-weight:300;
+  color:rgba(255,255,255,.7); max-width:620px; line-height:1.7;
+  margin-bottom:3rem;
+}
+.hero-actions { display:flex; gap:1rem; flex-wrap:wrap; margin-bottom:4.5rem; }
+.btn {
+  display:inline-flex; align-items:center; gap:0.6rem;
+  font-family:var(--font-display); font-size:0.92rem; font-weight:700;
+  padding:0.9rem 2rem; border-radius:var(--radius-pill);
+  transition:opacity var(--dur) var(--ease), transform var(--dur) var(--ease), background var(--dur) var(--ease);
+  border:1px solid transparent;
+}
+.btn-primary { background:var(--green-v); color:var(--white); border-color:var(--green-v); }
+.btn-primary:hover { opacity:.88; transform:translateY(-1px); }
+.btn-ghost-dark { background:transparent; color:var(--white); border-color:rgba(255,255,255,.2); }
+.btn-ghost-dark:hover { background:rgba(255,255,255,.08); transform:translateY(-1px); }
+
+.hero-stats {
+  display:grid; grid-template-columns:repeat(4,1fr);
+  border-top:1px solid rgba(255,255,255,.12);
+}
+@media (max-width:720px) { .hero-stats { grid-template-columns:repeat(2,1fr); } }
+.hero-stat { padding:1.75rem 1.5rem; border-right:1px solid rgba(255,255,255,.1); }
+.hero-stat:last-child, .hero-stat:nth-child(2):last-child { border-right:none; }
+@media (max-width:720px) { .hero-stat:nth-child(2) { border-right:none; } }
+.hero-stat .n {
+  font-family:var(--font-display);
+  font-size:clamp(2.2rem,4.5vw,3.8rem); font-weight:800;
+  color:var(--green-v); line-height:1; display:block;
+}
+.hero-stat .label {
+  font-size:0.82rem; color:rgba(255,255,255,.55);
+  display:block; margin-top:0.35rem;
+}
+
+/* ───── SECTIONS ───── */
+.section-wrap { max-width:1200px; margin:0 auto; }
+section { padding:5rem 3rem; }
+section:nth-of-type(even) { background:var(--off); }
+@media (max-width:720px) { section { padding:3.5rem 1.5rem; } }
+
+.section-head {
+  display:flex; align-items:flex-end; justify-content:space-between;
+  gap:2rem; margin-bottom:3rem; flex-wrap:wrap;
+}
+.section-eyebrow { display:flex; align-items:center; gap:0.75rem; margin-bottom:0.75rem; }
+.section-tag {
+  display:inline-block;
+  background:var(--green-tag); color:var(--green);
+  font-family:var(--font-display); font-size:0.7rem; font-weight:700;
+  letter-spacing:0.1em; text-transform:uppercase;
+  padding:0.3rem 0.75rem; border-radius:var(--radius-pill);
+}
+.section-tag.purple { background:var(--purple-lt); color:var(--purple); }
+.section-num { font-size:0.8rem; color:var(--muted); }
+.section-title {
+  font-family:var(--font-display);
+  font-size:clamp(2rem,4vw,3rem); font-weight:800; line-height:1.1;
+  color:var(--green); letter-spacing:-0.02em;
+  margin:0;
+}
+.section-title em { font-style:normal; color:var(--green-v); }
+.section-link {
+  display:inline-flex; align-items:center; gap:0.4rem;
+  font-family:var(--font-display); font-size:0.88rem; font-weight:700;
+  color:var(--green); border-bottom:2px solid var(--green-v); padding-bottom:2px;
+  transition:color var(--dur) var(--ease);
+}
+.section-link:hover { color:var(--green-v); }
+
+/* ───── MÉTIERS ───── */
+.grid-metiers {
+  display:grid; grid-template-columns:repeat(auto-fill,minmax(300px,1fr));
+  gap:1.5rem;
+}
+.card-metier {
+  background:var(--white); border:1.5px solid var(--border);
+  border-radius:var(--radius-md); padding:1.75rem;
+  display:flex; flex-direction:column; gap:1rem;
+  transition:border-color var(--dur) var(--ease), box-shadow var(--dur) var(--ease), transform var(--dur) var(--ease);
+  position:relative;
+}
+.card-metier:hover {
+  border-color:var(--green-v);
+  box-shadow:var(--shadow-hover);
+  transform:translateY(-2px);
+}
+.card-metier .family {
+  display:flex; align-items:center; gap:0.5rem;
+  font-family:var(--font-display); font-size:0.7rem; font-weight:700;
+  letter-spacing:0.1em; text-transform:uppercase;
+  color:var(--muted);
+}
+.card-metier .family .badge { margin-left:auto; }
+.card-metier h3 {
+  font-family:var(--font-display); font-size:1.15rem; font-weight:700;
+  color:var(--text); line-height:1.3;
+}
+.card-metier .desc {
+  font-size:0.9rem; color:var(--muted); line-height:1.6;
+  display:-webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical; overflow:hidden;
+}
+.card-metier .footer {
+  display:flex; gap:0.5rem; flex-wrap:wrap; align-items:center;
+  margin-top:auto; padding-top:1rem; border-top:1px dashed var(--border);
+}
+.code {
+  font-family:var(--font-display); font-size:0.72rem; font-weight:700;
+  color:var(--green); letter-spacing:0.06em;
+}
+.badge {
+  display:inline-flex; align-items:center; gap:0.3rem;
+  font-family:var(--font-display); font-size:0.68rem; font-weight:700;
+  letter-spacing:0.06em; text-transform:uppercase;
+  padding:0.25rem 0.7rem; border-radius:var(--radius-pill);
+}
+.badge--tension   { background:var(--tension-bg); color:var(--tension); }
+.badge--emergent  { background:var(--emergent-bg); color:var(--emergent); }
+.badge--stable    { background:var(--green-tag); color:var(--green); }
+.badge--prospect  { background:var(--prospect-bg); color:var(--prospect); }
+.badge--data      { background:var(--green-lt); color:var(--green); }
+
+/* ───── ÉTUDES ───── */
+.grid-etudes {
+  display:grid; grid-template-columns:repeat(auto-fill,minmax(340px,1fr));
+  gap:1.5rem;
+}
+.card-etude {
+  background:var(--white); border:1.5px solid var(--border);
+  border-radius:var(--radius-md); overflow:hidden;
+  display:flex; flex-direction:column;
+  transition:border-color var(--dur) var(--ease), box-shadow var(--dur) var(--ease), transform var(--dur) var(--ease);
+}
+.card-etude:hover {
+  border-color:var(--green-v);
+  box-shadow:var(--shadow-hover);
+  transform:translateY(-2px);
+}
+.card-etude .cover {
+  aspect-ratio:16/9;
+  background:var(--green);
+  position:relative; padding:1.5rem;
+  display:flex; flex-direction:column; justify-content:space-between;
+  overflow:hidden;
+}
+.card-etude .cover::after {
+  content:attr(data-letter); position:absolute;
+  right:-2rem; bottom:-4rem;
+  font-family:var(--font-display); font-size:14rem; font-weight:800;
+  color:rgba(95,182,112,.12); line-height:1;
+  pointer-events:none;
+}
+.card-etude .cover-year {
+  font-family:var(--font-display); font-size:0.85rem; font-weight:700;
+  color:rgba(255,255,255,.4); letter-spacing:0.08em;
+}
+.card-etude .cover-kind {
+  font-family:var(--font-display); font-size:0.75rem; font-weight:700;
+  color:var(--green-v); letter-spacing:0.08em; text-transform:uppercase;
+  display:inline-flex; align-items:center; gap:0.4rem;
+}
+.card-etude .cover.purple { background:var(--purple); }
+.card-etude .cover.purple::after { color:rgba(95,182,112,.08); }
+.card-etude .body { padding:1.5rem 1.75rem 1.75rem; display:flex; flex-direction:column; gap:0.75rem; flex:1; }
+.card-etude h3 {
+  font-family:var(--font-display); font-size:1.05rem; font-weight:700;
+  color:var(--text); line-height:1.35;
+}
+.card-etude .abstract {
+  font-size:0.88rem; color:var(--muted); line-height:1.6;
+  display:-webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical; overflow:hidden;
+  flex:1;
+}
+.card-etude .actions { display:flex; gap:0.5rem; flex-wrap:wrap; margin-top:0.5rem; }
+.file-btn {
+  display:inline-flex; align-items:center; gap:0.35rem;
+  padding:0.4rem 0.9rem; border-radius:var(--radius-pill);
+  border:1px solid var(--border);
+  font:500 0.78rem/1 var(--font-body); color:var(--muted);
+  transition:all var(--dur) var(--ease);
+}
+.file-btn:hover { border-color:var(--green-v); color:var(--green); background:var(--green-lt); }
+
+/* ───── DATAVIZ ───── */
+.dataviz-card {
+  background:var(--white); border:1.5px solid var(--border);
+  border-radius:var(--radius-lg); padding:2.5rem;
+  display:grid; grid-template-columns:1fr; gap:2.5rem;
+}
+@media (min-width:900px) { .dataviz-card { grid-template-columns:320px 1fr; } }
+.dataviz-card .intro h3 {
+  font-family:var(--font-display); font-size:1.4rem; font-weight:800;
+  color:var(--green); line-height:1.2; margin:0.75rem 0 0.75rem;
+}
+.dataviz-card .intro p { font-size:0.92rem; color:var(--muted); line-height:1.65; }
+.chart-header {
+  font-family:var(--font-display); font-size:0.7rem; font-weight:700;
+  letter-spacing:0.1em; text-transform:uppercase; color:var(--muted);
+  margin-bottom:1.5rem;
+}
+.bar-row {
+  display:grid; grid-template-columns:170px 1fr 50px;
+  align-items:center; gap:0.75rem;
+  margin-bottom:0.7rem;
+}
+.bar-name { font-size:0.82rem; color:var(--muted); text-align:right; }
+.bar-track {
+  height:8px; background:var(--border-soft);
+  border-radius:4px; overflow:hidden;
+}
+.bar-fill {
+  height:100%; background:var(--green-v); border-radius:4px;
+  transform-origin:left; animation:growBar 1s var(--ease) both;
+}
+.bar-fill.alt { background:var(--purple); }
+.bar-fill.alt2 { background:var(--emergent); }
+@keyframes growBar { from { transform:scaleX(0); } to { transform:scaleX(1); } }
+.bar-val {
+  font-family:var(--font-display); font-size:0.78rem; font-weight:700;
+  color:var(--green); text-align:right;
+}
+.legend {
+  display:flex; gap:1rem; flex-wrap:wrap; margin-top:1rem;
+  font-size:0.78rem; color:var(--muted);
+}
+.legend-item { display:inline-flex; align-items:center; gap:0.4rem; }
+.legend-dot { width:10px; height:10px; border-radius:2px; }
+
+/* ───── FOOTER ───── */
+footer {
+  background:var(--green); padding:3.5rem 3rem;
+  position:relative; overflow:hidden;
+}
+footer::before {
+  content:'A'; position:absolute; left:-3rem; bottom:-8rem;
+  font-family:var(--font-display); font-size:22rem; font-weight:800;
+  color:rgba(255,255,255,.035); line-height:1;
+  pointer-events:none;
+}
+.footer-inner {
+  position:relative; max-width:1200px; margin:0 auto;
+  display:grid; grid-template-columns:2fr 1fr 1fr 1fr;
+  gap:3rem;
+}
+@media (max-width:900px) { .footer-inner { grid-template-columns:1fr 1fr; gap:2rem; } }
+@media (max-width:560px) { .footer-inner { grid-template-columns:1fr; } }
+.footer-brand {
+  font-family:var(--font-display); font-size:2.5rem; font-weight:800;
+  color:var(--white); letter-spacing:-0.02em; line-height:1; margin-bottom:0.75rem;
+}
+.footer-brand span { color:var(--green-v); }
+.footer-meta { font-size:0.85rem; color:rgba(255,255,255,.55); line-height:1.7; max-width:360px; }
+.footer h4 {
+  font-family:var(--font-display); font-size:0.72rem; font-weight:700;
+  color:var(--white); letter-spacing:0.1em; text-transform:uppercase;
+  margin-bottom:1rem;
+}
+.footer ul { list-style:none; display:flex; flex-direction:column; gap:0.65rem; }
+.footer ul a {
+  font-size:0.88rem; color:rgba(255,255,255,.65);
+  transition:color var(--dur) var(--ease);
+}
+.footer ul a:hover { color:var(--green-v); }
+.footer-bottom {
+  position:relative; max-width:1200px; margin:2.5rem auto 0;
+  padding-top:1.5rem; border-top:1px solid rgba(255,255,255,.1);
+  display:flex; justify-content:space-between; gap:1rem; flex-wrap:wrap;
+  font-size:0.8rem; color:rgba(255,255,255,.45);
+}
+
+/* ───── COMMAND PALETTE (⌘K) ───── */
+.palette-overlay {
+  position:fixed; inset:0; z-index:300;
+  background:rgba(26,26,26,.6);
+  backdrop-filter:blur(8px);
+  display:none;
+  align-items:flex-start; justify-content:center;
+  padding-top:10vh;
+  animation:fadeIn var(--dur) var(--ease);
+}
+.palette-overlay.open { display:flex; }
+@keyframes fadeIn { from { opacity:0; } to { opacity:1; } }
+.palette {
+  width:100%; max-width:640px;
+  background:var(--white); border-radius:var(--radius-lg);
+  box-shadow:0 24px 80px rgba(0,68,35,.25);
+  overflow:hidden;
+  animation:popIn 280ms var(--ease);
+}
+@keyframes popIn { from { opacity:0; transform:translateY(-12px) scale(.97); } to { opacity:1; transform:translateY(0) scale(1); } }
+.palette-input {
+  display:flex; align-items:center; gap:0.75rem;
+  padding:1rem 1.25rem; border-bottom:1.5px solid var(--border);
+}
+.palette-input input {
+  flex:1; background:transparent; border:0; outline:0;
+  font:400 1rem/1.2 var(--font-body); color:var(--text);
+}
+.palette-input input::placeholder { color:var(--muted-2); }
+.palette-esc {
+  padding:0.25rem 0.55rem; border:1px solid var(--border);
+  border-radius:6px; font:600 0.7rem/1 var(--font-body);
+  color:var(--muted);
+}
+.palette-groups { max-height:420px; overflow-y:auto; padding:0.5rem 0; }
+.palette-group-label {
+  font-family:var(--font-display); font-size:0.68rem; font-weight:700;
+  letter-spacing:0.1em; text-transform:uppercase;
+  color:var(--muted); padding:0.75rem 1.25rem 0.3rem;
+}
+.palette-item {
+  display:flex; align-items:center; gap:0.75rem;
+  padding:0.6rem 1.25rem; cursor:pointer;
+  font-size:0.92rem; color:var(--text);
+  transition:background var(--dur) var(--ease);
+}
+.palette-item:hover, .palette-item.active { background:var(--green-lt); }
+.palette-item.active { border-left:3px solid var(--green-v); padding-left:calc(1.25rem - 3px); }
+.palette-item .kind {
+  margin-left:auto;
+  font-family:var(--font-display); font-size:0.7rem; font-weight:700;
+  color:var(--green); background:var(--green-tag);
+  padding:0.2rem 0.55rem; border-radius:4px;
+  letter-spacing:0.04em;
+}
+
+/* ───── ACCESSIBILITÉ ───── */
+:focus-visible {
+  outline:2px solid var(--green-v);
+  outline-offset:2px;
+  border-radius:4px;
+}
+
+/* ───── ANIM SCROLL ───── */
+.fade-up { opacity:0; transform:translateY(24px); transition:opacity .65s var(--ease), transform .65s var(--ease); }
+.fade-up.vis { opacity:1; transform:translateY(0); }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration:0.01ms !important;
+    transition-duration:0.01ms !important;
+  }
+  .fade-up { opacity:1; transform:none; }
+}
+</style>
+</head>
+<body>
+
+<!-- ════════ NAV ════════ -->
+<nav>
+  <div class="nav-left">
+    <a href="#" class="atlas-mark">atlas</a>
+    <div class="nav-divider"></div>
+    <span class="nav-prospective">Observatoire · Prospective</span>
+  </div>
+  <ul class="nav-links">
+    <li><a href="#metiers" class="active">Métiers</a></li>
+    <li><a href="#etudes">Études</a></li>
+    <li><a href="#dataviz">Data</a></li>
+    <li><a href="#actualites">Actualités</a></li>
+  </ul>
+  <div class="nav-right">
+    <button class="search-trigger" onclick="openPalette()" aria-label="Ouvrir la recherche">
+      <i data-lucide="search" style="width:15px;height:15px"></i>
+      <span>Rechercher…</span>
+      <kbd>⌘ K</kbd>
+    </button>
+    <span class="nav-badge">Édition 2026</span>
+  </div>
+</nav>
+
+<!-- ════════ HERO ════════ -->
+<div class="hero">
+  <div class="hero-inner">
+    <div class="hero-eyebrow">
+      <span class="hero-pill">Édition 2026</span>
+      <span>·</span>
+      <span>Branches professionnelles · OPCO ATLAS</span>
+    </div>
+    <h1 class="hero-title">OBSER<span class="accent">VATOIRE</span></h1>
+    <p class="hero-sub">
+      La cartographie vivante des métiers, compétences et qualifications
+      des branches accompagnées par OPCO Atlas. Études, données, fiches métiers,
+      tendances prospectives — un point d'entrée unique.
+    </p>
+    <div class="hero-actions">
+      <a href="#metiers" class="btn btn-primary">
+        Explorer les métiers
+        <i data-lucide="arrow-right" style="width:16px;height:16px"></i>
+      </a>
+      <a href="#etudes" class="btn btn-ghost-dark">
+        <i data-lucide="book-open" style="width:15px;height:15px"></i>
+        Parcourir les études
+      </a>
+    </div>
+    <div class="hero-stats">
+      <div class="hero-stat"><span class="n">11</span><span class="label">branches couvertes</span></div>
+      <div class="hero-stat"><span class="n">187K</span><span class="label">salariés dans le périmètre</span></div>
+      <div class="hero-stat"><span class="n">84</span><span class="label">fiches métiers vivantes</span></div>
+      <div class="hero-stat"><span class="n">36</span><span class="label">études publiées</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════ MÉTIERS ════════ -->
+<section id="metiers">
+  <div class="section-wrap fade-up">
+    <div class="section-head">
+      <div>
+        <div class="section-eyebrow">
+          <span class="section-tag">01 · Référentiel vivant</span>
+          <span class="section-num">Par Stéphane Phan · Mise à jour mensuelle</span>
+        </div>
+        <h2 class="section-title">Fiches métiers —<br><em>à la une ce trimestre</em></h2>
+      </div>
+      <a href="#" class="section-link">Voir les 84 fiches <i data-lucide="arrow-right" style="width:14px;height:14px"></i></a>
+    </div>
+
+    <div class="grid-metiers">
+      <a href="#" class="card-metier">
+        <div class="family">
+          <i data-lucide="cog" style="width:12px;height:12px"></i>
+          <span>Conception & Maintenance</span>
+          <span class="badge badge--tension">Tension</span>
+        </div>
+        <h3>Technicien·ne maintenance industrielle</h3>
+        <p class="desc">Intervient sur les équipements de production, diagnostique les pannes et planifie la maintenance préventive dans un environnement industriel automatisé.</p>
+        <div class="footer">
+          <span class="code">ROME · I1304</span>
+          <span class="badge badge--data">12 formations</span>
+        </div>
+      </a>
+
+      <a href="#" class="card-metier">
+        <div class="family">
+          <i data-lucide="bar-chart-3" style="width:12px;height:12px"></i>
+          <span>Data & Analytics</span>
+          <span class="badge badge--emergent">Émergent</span>
+        </div>
+        <h3>Data analyst branches professionnelles</h3>
+        <p class="desc">Exploite les données d'emploi et de formation pour éclairer les politiques de branche et produire des tableaux de bord prospectifs.</p>
+        <div class="footer">
+          <span class="code">ROME · M1403</span>
+          <span class="badge badge--data">3 CQP</span>
+        </div>
+      </a>
+
+      <a href="#" class="card-metier">
+        <div class="family">
+          <i data-lucide="leaf" style="width:12px;height:12px"></i>
+          <span>Qualité & RSE</span>
+          <span class="badge badge--prospect">Prospective</span>
+        </div>
+        <h3>Responsable transition écologique</h3>
+        <p class="desc">Pilote les démarches bas-carbone, accompagne la certification RSE et coordonne l'évolution des compétences environnementales.</p>
+        <div class="footer">
+          <span class="code">ROME · H1302</span>
+          <span class="badge badge--stable">Stable</span>
+        </div>
+      </a>
+
+      <a href="#" class="card-metier">
+        <div class="family">
+          <i data-lucide="users" style="width:12px;height:12px"></i>
+          <span>Ressources humaines</span>
+          <span class="badge badge--stable">Stable</span>
+        </div>
+        <h3>Chargé·e de développement des compétences</h3>
+        <p class="desc">Construit les plans de formation, anime le dialogue social sur les compétences et accompagne les mobilités internes des salariés.</p>
+        <div class="footer">
+          <span class="code">ROME · M1502</span>
+          <span class="badge badge--data">8 formations</span>
+        </div>
+      </a>
+
+      <a href="#" class="card-metier">
+        <div class="family">
+          <i data-lucide="zap" style="width:12px;height:12px"></i>
+          <span>Énergie & réseaux</span>
+          <span class="badge badge--tension">Tension</span>
+        </div>
+        <h3>Technicien·ne énergies renouvelables</h3>
+        <p class="desc">Installe, raccorde et maintient les équipements photovoltaïques, éoliens et de stockage d'énergie en milieu industriel et tertiaire.</p>
+        <div class="footer">
+          <span class="code">ROME · F1605</span>
+          <span class="badge badge--emergent">Nouveau</span>
+        </div>
+      </a>
+
+      <a href="#" class="card-metier">
+        <div class="family">
+          <i data-lucide="sparkles" style="width:12px;height:12px"></i>
+          <span>Numérique & IA</span>
+          <span class="badge badge--emergent">Émergent</span>
+        </div>
+        <h3>Intégrateur·trice IA opérationnelle</h3>
+        <p class="desc">Déploie et supervise les outils d'intelligence artificielle dans les process métier, forme les équipes et documente les usages responsables.</p>
+        <div class="footer">
+          <span class="code">ROME · M1805</span>
+          <span class="badge badge--data">2 CQP</span>
+        </div>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ════════ ÉTUDES ════════ -->
+<section id="etudes">
+  <div class="section-wrap fade-up">
+    <div class="section-head">
+      <div>
+        <div class="section-eyebrow">
+          <span class="section-tag purple">02 · Bibliothèque documentaire</span>
+          <span class="section-num">36 études · 11 branches</span>
+        </div>
+        <h2 class="section-title">Études & rapports —<br><em>récemment publiés</em></h2>
+      </div>
+      <a href="#" class="section-link">Toutes les études <i data-lucide="arrow-right" style="width:14px;height:14px"></i></a>
+    </div>
+
+    <div class="grid-etudes">
+      <a href="#" class="card-etude">
+        <div class="cover" data-letter="P">
+          <div class="cover-year">N°26.04 · Avril 2026</div>
+          <div class="cover-kind">
+            <i data-lucide="telescope" style="width:13px;height:13px"></i>
+            Prospective
+          </div>
+        </div>
+        <div class="body">
+          <h3>Métiers de l'industrie et transition écologique — horizon 2035</h3>
+          <p class="abstract">Cartographie des évolutions des compétences attendues dans les branches adhérentes face aux enjeux de décarbonation, d'économie circulaire et d'adaptation climatique.</p>
+          <div class="actions">
+            <span class="file-btn"><i data-lucide="file-text" style="width:12px;height:12px"></i> PDF · 84 p.</span>
+            <span class="file-btn"><i data-lucide="sheet" style="width:12px;height:12px"></i> Données Excel</span>
+          </div>
+        </div>
+      </a>
+
+      <a href="#" class="card-etude">
+        <div class="cover purple" data-letter="E">
+          <div class="cover-year">N°25.11 · Nov. 2025</div>
+          <div class="cover-kind">
+            <i data-lucide="users" style="width:13px;height:13px"></i>
+            Enquête
+          </div>
+        </div>
+        <div class="body">
+          <h3>Reconversions professionnelles dans la branche : profils et trajectoires</h3>
+          <p class="abstract">Analyse quantitative et qualitative des parcours de reconversion observés sur 2020-2025. Facteurs de réussite, freins rencontrés et dispositifs mobilisés.</p>
+          <div class="actions">
+            <span class="file-btn"><i data-lucide="file-text" style="width:12px;height:12px"></i> PDF · 52 p.</span>
+            <span class="file-btn"><i data-lucide="sheet" style="width:12px;height:12px"></i> Données</span>
+          </div>
+        </div>
+      </a>
+
+      <a href="#" class="card-etude">
+        <div class="cover" data-letter="B">
+          <div class="cover-year">T1 · 2026</div>
+          <div class="cover-kind">
+            <i data-lucide="trending-up" style="width:13px;height:13px"></i>
+            Baromètre
+          </div>
+        </div>
+        <div class="body">
+          <h3>Baromètre trimestriel de l'emploi et de la formation</h3>
+          <p class="abstract">Chiffres-clés trimestriels : effectifs, tensions, contrats d'alternance, taux d'accès à la formation, évolution des salaires médians par métier.</p>
+          <div class="actions">
+            <span class="file-btn"><i data-lucide="file-text" style="width:12px;height:12px"></i> PDF · 28 p.</span>
+            <span class="file-btn"><i data-lucide="sheet" style="width:12px;height:12px"></i> Données T1</span>
+          </div>
+        </div>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ════════ DATAVIZ ════════ -->
+<section id="dataviz">
+  <div class="section-wrap fade-up">
+    <div class="section-head">
+      <div>
+        <div class="section-eyebrow">
+          <span class="section-tag">03 · Les données clés</span>
+          <span class="section-num">Source France Travail + déclaratif branche · T1 2026</span>
+        </div>
+        <h2 class="section-title">Les métiers —<br><em>les plus en tension</em></h2>
+      </div>
+      <a href="#" class="section-link">Explorer toutes les data <i data-lucide="arrow-right" style="width:14px;height:14px"></i></a>
+    </div>
+
+    <div class="dataviz-card">
+      <div class="intro">
+        <span class="section-tag">Indice de tension</span>
+        <h3>Top 6 des métiers où la demande dépasse l'offre</h3>
+        <p>Ratio offres d'emploi / candidatures sur les 6 derniers mois. Une valeur &gt; 1 indique un déséquilibre en faveur des candidats.</p>
+        <div class="legend">
+          <span class="legend-item"><span class="legend-dot" style="background:var(--green-v)"></span>Tension haute</span>
+          <span class="legend-item"><span class="legend-dot" style="background:var(--purple)"></span>Tension modérée</span>
+          <span class="legend-item"><span class="legend-dot" style="background:var(--emergent)"></span>Détente</span>
+        </div>
+      </div>
+      <div>
+        <div class="chart-header">// Top 6 · T1 2026</div>
+        <div class="bar-row"><span class="bar-name">Maintenance industrielle</span><div class="bar-track"><div class="bar-fill" style="width:92%"></div></div><span class="bar-val">2.4×</span></div>
+        <div class="bar-row"><span class="bar-name">Tech. énergies ren.</span><div class="bar-track"><div class="bar-fill" style="width:85%"></div></div><span class="bar-val">2.1×</span></div>
+        <div class="bar-row"><span class="bar-name">Intégrateur·trice IA</span><div class="bar-track"><div class="bar-fill alt" style="width:68%"></div></div><span class="bar-val">1.7×</span></div>
+        <div class="bar-row"><span class="bar-name">Data analyst</span><div class="bar-track"><div class="bar-fill alt" style="width:52%"></div></div><span class="bar-val">1.3×</span></div>
+        <div class="bar-row"><span class="bar-name">Responsable RSE</span><div class="bar-track"><div class="bar-fill alt" style="width:44%"></div></div><span class="bar-val">1.1×</span></div>
+        <div class="bar-row"><span class="bar-name">Chargé·e développement RH</span><div class="bar-track"><div class="bar-fill alt2" style="width:30%"></div></div><span class="bar-val">0.8×</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════ FOOTER ════════ -->
+<footer>
+  <div class="footer-inner">
+    <div>
+      <div class="footer-brand">OBSER<span>VATOIRE</span></div>
+      <p class="footer-meta">
+        Observatoire prospectif des métiers et des qualifications
+        des branches accompagnées par OPCO Atlas ·
+        Direction des Politiques de Branches.
+      </p>
+    </div>
+    <div>
+      <h4>Explorer</h4>
+      <ul>
+        <li><a href="#metiers">Fiches métiers</a></li>
+        <li><a href="#etudes">Études & rapports</a></li>
+        <li><a href="#dataviz">Données</a></li>
+        <li><a href="#actualites">Actualités</a></li>
+      </ul>
+    </div>
+    <div>
+      <h4>Ressources</h4>
+      <ul>
+        <li><a href="#">Méthodologie</a></li>
+        <li><a href="#">Contribuer</a></li>
+        <li><a href="#">API publique</a></li>
+        <li><a href="#">Flux RSS · Atom</a></li>
+      </ul>
+    </div>
+    <div>
+      <h4>Légal</h4>
+      <ul>
+        <li><a href="#">Mentions légales</a></li>
+        <li><a href="#">Accessibilité</a></li>
+        <li><a href="#">Confidentialité</a></li>
+        <li><a href="#">Contact</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span>© 2026 Observatoire Prospective Atlas · OPCO Atlas</span>
+    <span>Maquette direction artistique · v0.2 · DESIGN.md</span>
+  </div>
+</footer>
+
+<!-- ════════ COMMAND PALETTE ════════ -->
+<div class="palette-overlay" id="palette" onclick="if(event.target===this)closePalette()">
+  <div class="palette" role="dialog" aria-label="Recherche rapide">
+    <div class="palette-input">
+      <i data-lucide="search" style="width:18px;height:18px;color:var(--green)"></i>
+      <input type="text" placeholder="Rechercher un métier, une étude, une compétence…" autofocus />
+      <span class="palette-esc">Esc</span>
+    </div>
+    <div class="palette-groups">
+      <div class="palette-group-label">Métiers · 3 résultats</div>
+      <div class="palette-item active">
+        <i data-lucide="briefcase" style="width:16px;height:16px;color:var(--green-v)"></i>
+        <span>Technicien·ne maintenance industrielle</span>
+        <span class="kind">Métier</span>
+      </div>
+      <div class="palette-item">
+        <i data-lucide="briefcase" style="width:16px;height:16px;color:var(--muted)"></i>
+        <span>Data analyst branches professionnelles</span>
+        <span class="kind">Métier</span>
+      </div>
+      <div class="palette-item">
+        <i data-lucide="briefcase" style="width:16px;height:16px;color:var(--muted)"></i>
+        <span>Technicien·ne énergies renouvelables</span>
+        <span class="kind">Métier</span>
+      </div>
+      <div class="palette-group-label">Études · 2 résultats</div>
+      <div class="palette-item">
+        <i data-lucide="file-text" style="width:16px;height:16px;color:var(--muted)"></i>
+        <span>Métiers de l'industrie et transition écologique</span>
+        <span class="kind">Étude · 2026</span>
+      </div>
+      <div class="palette-item">
+        <i data-lucide="file-text" style="width:16px;height:16px;color:var(--muted)"></i>
+        <span>Reconversions professionnelles : profils et trajectoires</span>
+        <span class="kind">Étude · 2025</span>
+      </div>
+      <div class="palette-group-label">Actions</div>
+      <div class="palette-item">
+        <i data-lucide="download" style="width:16px;height:16px;color:var(--muted)"></i>
+        <span>Exporter les données du trimestre (CSV)</span>
+        <span class="kind">⌘ E</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  lucide.createIcons();
+
+  // Fade-up scroll reveal
+  const obs = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('vis'); });
+  }, { threshold: 0.08 });
+  document.querySelectorAll('.fade-up').forEach(el => obs.observe(el));
+
+  // Command palette
+  function openPalette() {
+    document.getElementById('palette').classList.add('open');
+    setTimeout(() => document.querySelector('.palette input')?.focus(), 60);
+  }
+  function closePalette() { document.getElementById('palette').classList.remove('open'); }
+  document.addEventListener('keydown', (e) => {
+    if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') { e.preventDefault(); openPalette(); }
+    if (e.key === 'Escape') closePalette();
+  });
+</script>
+</body>
+</html>

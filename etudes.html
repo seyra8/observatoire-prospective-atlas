@@ -1,0 +1,620 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Bibliothèque d'études · Observatoire Prospective Atlas</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet" />
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+<style>
+:root {
+  --purple:#2D0F64; --purple-lt:#EEE8FA;
+  --green:#004423; --green-v:#5FB670; --green-lt:#EAF5ED; --green-tag:#E8F7EC;
+  --white:#FFFFFF; --off:#F7F6F3;
+  --border:#E2E0DB; --border-soft:#EFEDE7;
+  --text:#1A1A1A; --text-2:#3A3A3A; --muted:#6B6868; --muted-2:#9A9794;
+  --tension:#C94A3D; --tension-bg:#FBEDEB;
+  --emergent:#C87A2B; --emergent-bg:#FBF1E4;
+  --prospect:#2D0F64; --prospect-bg:#EEE8FA;
+  --radius-sm:10px; --radius-md:16px; --radius-lg:20px; --radius-pill:2rem;
+  --shadow-card:0 4px 20px rgba(0,68,35,.06);
+  --shadow-hover:0 12px 40px rgba(0,68,35,.12);
+  --ease:cubic-bezier(.4,0,.2,1); --dur:200ms;
+  --font-display:'Outfit','Circular Std','Helvetica Neue',sans-serif;
+  --font-body:'DM Sans',-apple-system,sans-serif;
+}
+*,*::before,*::after { box-sizing:border-box; margin:0; padding:0; }
+body { background:var(--white); color:var(--text); font-family:var(--font-body); line-height:1.65; -webkit-font-smoothing:antialiased; overflow-x:hidden; }
+a { color:inherit; text-decoration:none; }
+button { font-family:inherit; cursor:pointer; border:0; background:none; }
+input, select { font-family:inherit; }
+img,svg { display:block; max-width:100%; }
+
+/* ───── NAV ───── */
+nav { position:sticky; top:0; z-index:200; background:var(--white); border-bottom:1.5px solid var(--border); display:flex; align-items:center; justify-content:space-between; padding:0 3rem; height:72px; }
+.nav-left { display:flex; align-items:center; gap:1.25rem; }
+.atlas-mark { font-family:var(--font-display); font-weight:800; color:var(--purple); font-size:1.3rem; letter-spacing:-0.02em; }
+.nav-divider { width:1px; height:32px; background:var(--border); }
+.nav-prospective { font-family:var(--font-display); font-size:0.85rem; font-weight:700; letter-spacing:0.04em; color:var(--green); text-transform:uppercase; }
+.nav-links { display:flex; gap:2.5rem; list-style:none; }
+@media(max-width:960px){.nav-links{display:none;}}
+.nav-links a { font-size:0.88rem; color:var(--muted); transition:color var(--dur) var(--ease); }
+.nav-links a:hover, .nav-links a.active { color:var(--green); }
+.nav-right { display:flex; align-items:center; gap:1rem; }
+.nav-badge { background:var(--green-v); color:var(--white); font-family:var(--font-display); font-size:0.72rem; font-weight:700; letter-spacing:0.06em; padding:0.35rem 0.9rem; border-radius:var(--radius-pill); }
+
+/* ───── PAGE HEADER ───── */
+.page-header {
+  background:var(--green); color:var(--white);
+  padding:4rem 3rem 3.5rem; position:relative; overflow:hidden;
+}
+.page-header::before {
+  content:'B'; position:absolute; right:-4rem; top:-6rem;
+  font-family:var(--font-display); font-size:42vw; font-weight:800;
+  color:rgba(255,255,255,.04); line-height:1; pointer-events:none;
+}
+.page-header-inner { max-width:1400px; margin:0 auto; position:relative; }
+.breadcrumb { display:flex; align-items:center; gap:0.5rem; font-size:0.82rem; color:rgba(255,255,255,.55); margin-bottom:1.5rem; flex-wrap:wrap; }
+.breadcrumb a { color:rgba(255,255,255,.65); transition:color var(--dur) var(--ease); }
+.breadcrumb a:hover { color:var(--green-v); }
+.page-eyebrow {
+  display:inline-block; background:rgba(95,182,112,.2); border:1px solid rgba(95,182,112,.4);
+  color:var(--green-v); font-family:var(--font-display); font-size:0.72rem; font-weight:700;
+  letter-spacing:0.1em; text-transform:uppercase;
+  padding:0.3rem 0.8rem; border-radius:var(--radius-pill); margin-bottom:1.25rem;
+}
+.page-title {
+  font-family:var(--font-display); font-size:clamp(2.5rem,6vw,4.5rem); font-weight:800;
+  line-height:1; letter-spacing:-0.02em; color:var(--white); max-width:860px; margin-bottom:1.25rem;
+}
+.page-title em { font-style:normal; color:var(--green-v); }
+.page-sub { font-size:1.1rem; font-weight:300; color:rgba(255,255,255,.75); max-width:680px; line-height:1.7; }
+
+/* ───── SEARCH BAND ───── */
+.search-band {
+  background:var(--white); border-bottom:1.5px solid var(--border);
+  padding:1.5rem 3rem; position:sticky; top:72px; z-index:50;
+  box-shadow:0 2px 12px rgba(0,0,0,.03);
+}
+.search-band-inner { max-width:1400px; margin:0 auto; display:flex; align-items:center; gap:1rem; flex-wrap:wrap; }
+.search-input-wrap {
+  flex:1; min-width:280px;
+  display:flex; align-items:center; gap:0.75rem;
+  padding:0.8rem 1.2rem;
+  background:var(--off); border:1.5px solid var(--border);
+  border-radius:var(--radius-pill);
+  transition:all var(--dur) var(--ease);
+}
+.search-input-wrap:focus-within { border-color:var(--green-v); background:var(--white); box-shadow:0 0 0 3px var(--green-lt); }
+.search-input-wrap input {
+  flex:1; background:transparent; border:0; outline:0;
+  font-size:0.95rem; color:var(--text);
+}
+.search-input-wrap input::placeholder { color:var(--muted-2); }
+.search-input-wrap kbd {
+  padding:2px 6px; background:var(--white); border:1px solid var(--border);
+  border-radius:4px; font:600 0.7rem/1 var(--font-body); color:var(--muted);
+}
+.sort-select {
+  display:flex; align-items:center; gap:0.5rem;
+  padding:0.65rem 1.2rem 0.65rem 1.2rem;
+  background:var(--white); border:1.5px solid var(--border);
+  border-radius:var(--radius-pill);
+  font-family:var(--font-display); font-size:0.85rem; font-weight:600;
+  color:var(--text); cursor:pointer;
+  transition:border-color var(--dur) var(--ease);
+  appearance:none; -webkit-appearance:none;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%236B6868' stroke-width='2.5' stroke-linecap='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat:no-repeat; background-position:right 1rem center;
+  padding-right:2.5rem;
+}
+.sort-select:hover { border-color:var(--green-v); }
+.view-toggle { display:flex; gap:0; background:var(--off); border:1.5px solid var(--border); border-radius:var(--radius-pill); padding:3px; }
+.view-btn { padding:0.5rem 0.9rem; border-radius:var(--radius-pill); color:var(--muted); display:inline-flex; align-items:center; gap:0.4rem; font-family:var(--font-display); font-size:0.82rem; font-weight:600; transition:all var(--dur) var(--ease); }
+.view-btn.active { background:var(--white); color:var(--green); box-shadow:var(--shadow-card); }
+
+/* ───── MAIN LAYOUT ───── */
+.layout {
+  max-width:1400px; margin:0 auto;
+  padding:2.5rem 3rem 5rem;
+  display:grid; grid-template-columns:280px minmax(0,1fr);
+  gap:3rem;
+}
+@media(max-width:960px){.layout{grid-template-columns:1fr; padding:2rem 1.5rem 3rem; gap:2rem;}}
+
+/* ───── FILTERS SIDEBAR ───── */
+.filters { display:flex; flex-direction:column; gap:1.75rem; }
+@media(min-width:960px){.filters{position:sticky; top:160px; height:fit-content;}}
+
+.filter-group h4 {
+  font-family:var(--font-display); font-size:0.72rem; font-weight:700;
+  letter-spacing:0.1em; text-transform:uppercase; color:var(--green);
+  margin-bottom:0.9rem; padding-bottom:0.6rem;
+  border-bottom:1px dashed var(--border);
+  display:flex; align-items:center; gap:0.5rem;
+}
+.filter-group h4 .count { margin-left:auto; color:var(--muted); font-weight:500; font-size:0.75rem; }
+.filter-list { display:flex; flex-direction:column; gap:0.5rem; }
+.filter-item { display:flex; align-items:center; gap:0.6rem; padding:0.35rem 0; cursor:pointer; font-size:0.88rem; color:var(--text-2); transition:color var(--dur) var(--ease); }
+.filter-item:hover { color:var(--green); }
+.filter-item input[type="checkbox"] {
+  appearance:none; -webkit-appearance:none;
+  width:18px; height:18px;
+  border:1.5px solid var(--border); border-radius:5px;
+  background:var(--white); cursor:pointer; flex-shrink:0;
+  transition:all var(--dur) var(--ease); position:relative;
+}
+.filter-item input[type="checkbox"]:hover { border-color:var(--green-v); }
+.filter-item input[type="checkbox"]:checked { background:var(--green-v); border-color:var(--green-v); }
+.filter-item input[type="checkbox"]:checked::after {
+  content:''; position:absolute; left:5px; top:1px;
+  width:5px; height:10px; border:solid var(--white);
+  border-width:0 2px 2px 0; transform:rotate(45deg);
+}
+.filter-item .label { flex:1; }
+.filter-item .num { color:var(--muted-2); font-size:0.78rem; font-variant-numeric:tabular-nums; }
+
+.filter-year-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:0.4rem; }
+.filter-year-pill {
+  text-align:center; padding:0.45rem 0;
+  border:1.5px solid var(--border); border-radius:8px;
+  font-family:var(--font-display); font-size:0.82rem; font-weight:600;
+  color:var(--muted); cursor:pointer;
+  transition:all var(--dur) var(--ease);
+}
+.filter-year-pill:hover { border-color:var(--green-v); color:var(--green); }
+.filter-year-pill.active { background:var(--green); color:var(--white); border-color:var(--green); }
+
+.btn-reset {
+  padding:0.7rem 1rem; background:transparent; border:1.5px solid var(--border);
+  border-radius:var(--radius-pill); color:var(--muted);
+  font-family:var(--font-display); font-size:0.82rem; font-weight:600;
+  transition:all var(--dur) var(--ease);
+  display:inline-flex; align-items:center; justify-content:center; gap:0.4rem;
+  width:100%;
+}
+.btn-reset:hover { border-color:var(--tension); color:var(--tension); background:var(--tension-bg); }
+
+/* ───── RESULTS ───── */
+.results-head {
+  display:flex; align-items:center; justify-content:space-between;
+  margin-bottom:1.5rem; gap:1rem; flex-wrap:wrap;
+}
+.results-count {
+  font-family:var(--font-display); font-size:1rem; font-weight:600; color:var(--text);
+}
+.results-count strong { color:var(--green); font-weight:800; }
+
+.active-filters { display:flex; gap:0.5rem; flex-wrap:wrap; margin-bottom:1.5rem; }
+.active-filter {
+  display:inline-flex; align-items:center; gap:0.4rem;
+  padding:0.35rem 0.35rem 0.35rem 0.85rem;
+  background:var(--green-tag); color:var(--green);
+  border-radius:var(--radius-pill);
+  font-family:var(--font-display); font-size:0.78rem; font-weight:600;
+}
+.active-filter button {
+  width:18px; height:18px; border-radius:50%;
+  background:var(--green); color:var(--white);
+  display:inline-flex; align-items:center; justify-content:center;
+  transition:opacity var(--dur) var(--ease);
+}
+.active-filter button:hover { opacity:.7; }
+
+/* ───── CARDS GRID ───── */
+.etudes-grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(320px, 1fr)); gap:1.5rem; }
+.card-etude {
+  background:var(--white); border:1.5px solid var(--border);
+  border-radius:var(--radius-md); overflow:hidden;
+  display:flex; flex-direction:column;
+  transition:all var(--dur) var(--ease);
+}
+.card-etude:hover {
+  border-color:var(--green-v); box-shadow:var(--shadow-hover);
+  transform:translateY(-2px);
+}
+.card-etude .cover {
+  aspect-ratio:16/9; background:var(--green);
+  position:relative; padding:1.5rem;
+  display:flex; flex-direction:column; justify-content:space-between;
+  overflow:hidden;
+}
+.card-etude .cover::after {
+  content:attr(data-letter); position:absolute;
+  right:-2rem; bottom:-4rem;
+  font-family:var(--font-display); font-size:14rem; font-weight:800;
+  color:rgba(95,182,112,.12); line-height:1; pointer-events:none;
+}
+.card-etude .cover.purple { background:var(--purple); }
+.card-etude .cover.purple::after { color:rgba(95,182,112,.08); }
+.card-etude .cover.olive { background:#3a5a2d; }
+.card-etude .cover.deep { background:#0d3b24; }
+.card-etude .cover-year {
+  font-family:var(--font-display); font-size:0.78rem; font-weight:700;
+  color:rgba(255,255,255,.42); letter-spacing:0.06em;
+}
+.card-etude .cover-kind {
+  font-family:var(--font-display); font-size:0.72rem; font-weight:700;
+  color:var(--green-v); letter-spacing:0.08em; text-transform:uppercase;
+  display:inline-flex; align-items:center; gap:0.35rem;
+}
+.card-etude .body { padding:1.4rem 1.5rem 1.5rem; display:flex; flex-direction:column; gap:0.75rem; flex:1; }
+.card-etude .branch-tag {
+  font-family:var(--font-display); font-size:0.65rem; font-weight:700;
+  letter-spacing:0.1em; text-transform:uppercase; color:var(--green);
+}
+.card-etude h3 { font-family:var(--font-display); font-size:1.02rem; font-weight:700; color:var(--text); line-height:1.35; }
+.card-etude .abstract {
+  font-size:0.85rem; color:var(--muted); line-height:1.6;
+  display:-webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical; overflow:hidden; flex:1;
+}
+.card-etude .actions { display:flex; gap:0.4rem; flex-wrap:wrap; margin-top:0.35rem; }
+.file-btn {
+  display:inline-flex; align-items:center; gap:0.3rem;
+  padding:0.35rem 0.8rem; border-radius:var(--radius-pill);
+  border:1px solid var(--border);
+  font:500 0.75rem/1 var(--font-body); color:var(--muted);
+  transition:all var(--dur) var(--ease);
+}
+.file-btn:hover { border-color:var(--green-v); color:var(--green); background:var(--green-lt); }
+
+/* ───── PAGINATION ───── */
+.pagination {
+  display:flex; align-items:center; justify-content:center; gap:0.4rem;
+  margin-top:3rem; flex-wrap:wrap;
+}
+.page-btn {
+  min-width:40px; height:40px; padding:0 0.75rem;
+  border-radius:var(--radius-pill); border:1.5px solid var(--border);
+  background:var(--white); color:var(--text);
+  font-family:var(--font-display); font-size:0.85rem; font-weight:600;
+  cursor:pointer; transition:all var(--dur) var(--ease);
+  display:inline-flex; align-items:center; justify-content:center; gap:0.35rem;
+}
+.page-btn:hover:not(:disabled) { border-color:var(--green-v); color:var(--green); }
+.page-btn:disabled { opacity:.4; cursor:not-allowed; }
+.page-btn.active { background:var(--green); color:var(--white); border-color:var(--green); }
+.page-ellipsis { color:var(--muted); padding:0 0.25rem; font-family:var(--font-display); font-weight:700; }
+
+/* FOOTER MINI */
+.footer-mini { background:var(--off); border-top:1px solid var(--border); padding:2rem 3rem; font-size:0.82rem; color:var(--muted); }
+.footer-mini-inner { max-width:1400px; margin:0 auto; display:flex; justify-content:space-between; gap:1rem; flex-wrap:wrap; }
+
+:focus-visible { outline:2px solid var(--green-v); outline-offset:2px; border-radius:4px; }
+@media (prefers-reduced-motion: reduce) { *,*::before,*::after { animation-duration:.01ms!important; transition-duration:.01ms!important; } }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-left">
+    <a href="index.html" class="atlas-mark">atlas</a>
+    <div class="nav-divider"></div>
+    <span class="nav-prospective">Observatoire · Prospective</span>
+  </div>
+  <ul class="nav-links">
+    <li><a href="index.html#metiers">Métiers</a></li>
+    <li><a href="etudes.html" class="active">Études</a></li>
+    <li><a href="index.html#dataviz">Data</a></li>
+    <li><a href="#">Actualités</a></li>
+  </ul>
+  <div class="nav-right">
+    <span class="nav-badge">Édition 2026</span>
+  </div>
+</nav>
+
+<!-- PAGE HEADER -->
+<header class="page-header">
+  <div class="page-header-inner">
+    <div class="breadcrumb">
+      <a href="index.html">Observatoire</a>
+      <span>›</span>
+      <span style="color:rgba(255,255,255,.85)">Bibliothèque d'études</span>
+    </div>
+    <span class="page-eyebrow">Bibliothèque documentaire · 36 publications</span>
+    <h1 class="page-title">Études &amp; rapports —<br><em>toute la production Atlas</em></h1>
+    <p class="page-sub">
+      Études prospectives, enquêtes de branche, baromètres trimestriels, cartographies métiers :
+      l'ensemble des publications de la Prospective Atlas, consultables, filtrables et téléchargeables.
+    </p>
+  </div>
+</header>
+
+<!-- SEARCH BAND -->
+<div class="search-band">
+  <div class="search-band-inner">
+    <label class="search-input-wrap">
+      <i data-lucide="search" style="width:18px;height:18px;color:var(--muted)"></i>
+      <input type="text" placeholder="Rechercher par titre, thématique, branche, auteur…" value="compétences" />
+      <kbd>⌘ K</kbd>
+    </label>
+    <select class="sort-select" aria-label="Trier">
+      <option>Plus récent</option>
+      <option>Plus ancien</option>
+      <option>Pertinence</option>
+      <option>Titre A-Z</option>
+      <option>Plus téléchargé</option>
+    </select>
+    <div class="view-toggle">
+      <button class="view-btn active"><i data-lucide="layout-grid" style="width:14px;height:14px"></i> Grille</button>
+      <button class="view-btn"><i data-lucide="list" style="width:14px;height:14px"></i> Liste</button>
+    </div>
+  </div>
+</div>
+
+<!-- LAYOUT -->
+<div class="layout">
+
+  <!-- FILTERS -->
+  <aside class="filters">
+    <div class="filter-group">
+      <h4><i data-lucide="sliders-horizontal" style="width:13px;height:13px"></i> Filtres <span class="count">4 actifs</span></h4>
+      <button class="btn-reset"><i data-lucide="x" style="width:13px;height:13px"></i> Réinitialiser</button>
+    </div>
+
+    <div class="filter-group">
+      <h4>Type de publication</h4>
+      <div class="filter-list">
+        <label class="filter-item"><input type="checkbox" checked /><span class="label">Étude prospective</span><span class="num">14</span></label>
+        <label class="filter-item"><input type="checkbox" checked /><span class="label">Enquête de branche</span><span class="num">9</span></label>
+        <label class="filter-item"><input type="checkbox" /><span class="label">Baromètre trimestriel</span><span class="num">6</span></label>
+        <label class="filter-item"><input type="checkbox" /><span class="label">Cartographie métiers</span><span class="num">4</span></label>
+        <label class="filter-item"><input type="checkbox" /><span class="label">Note de synthèse</span><span class="num">3</span></label>
+      </div>
+    </div>
+
+    <div class="filter-group">
+      <h4>Branche professionnelle</h4>
+      <div class="filter-list">
+        <label class="filter-item"><input type="checkbox" /><span class="label">Bureaux d'études</span><span class="num">10</span></label>
+        <label class="filter-item"><input type="checkbox" /><span class="label">Banque</span><span class="num">6</span></label>
+        <label class="filter-item"><input type="checkbox" checked /><span class="label">Assurance</span><span class="num">5</span></label>
+        <label class="filter-item"><input type="checkbox" /><span class="label">Courtage</span><span class="num">4</span></label>
+        <label class="filter-item"><input type="checkbox" /><span class="label">Agents généraux</span><span class="num">3</span></label>
+        <label class="filter-item"><input type="checkbox" /><span class="label">Experts-comptables</span><span class="num">3</span></label>
+        <label class="filter-item"><input type="checkbox" /><span class="label">Transverse Atlas</span><span class="num">5</span></label>
+      </div>
+    </div>
+
+    <div class="filter-group">
+      <h4>Année</h4>
+      <div class="filter-year-grid">
+        <button class="filter-year-pill active">2026</button>
+        <button class="filter-year-pill">2025</button>
+        <button class="filter-year-pill">2024</button>
+        <button class="filter-year-pill">2023</button>
+        <button class="filter-year-pill">2022</button>
+        <button class="filter-year-pill">+ anc.</button>
+      </div>
+    </div>
+
+    <div class="filter-group">
+      <h4>Thématique</h4>
+      <div class="filter-list">
+        <label class="filter-item"><input type="checkbox" /><span class="label">Compétences &amp; formations</span><span class="num">12</span></label>
+        <label class="filter-item"><input type="checkbox" /><span class="label">RSE &amp; transition écolo.</span><span class="num">8</span></label>
+        <label class="filter-item"><input type="checkbox" /><span class="label">Diversité &amp; inclusion</span><span class="num">5</span></label>
+        <label class="filter-item"><input type="checkbox" /><span class="label">IA &amp; numérique</span><span class="num">7</span></label>
+        <label class="filter-item"><input type="checkbox" /><span class="label">Démographie &amp; emploi</span><span class="num">9</span></label>
+        <label class="filter-item"><input type="checkbox" /><span class="label">Reconversions</span><span class="num">4</span></label>
+      </div>
+    </div>
+
+    <div class="filter-group">
+      <h4>Format disponible</h4>
+      <div class="filter-list">
+        <label class="filter-item"><input type="checkbox" /><span class="label">PDF</span><span class="num">36</span></label>
+        <label class="filter-item"><input type="checkbox" /><span class="label">Données Excel</span><span class="num">22</span></label>
+        <label class="filter-item"><input type="checkbox" /><span class="label">Données CSV / API</span><span class="num">14</span></label>
+        <label class="filter-item"><input type="checkbox" /><span class="label">Synthèse 2 pages</span><span class="num">18</span></label>
+      </div>
+    </div>
+  </aside>
+
+  <!-- RESULTS -->
+  <main>
+    <div class="results-head">
+      <div class="results-count"><strong>14 études</strong> correspondent à vos critères</div>
+    </div>
+
+    <div class="active-filters">
+      <span class="active-filter">Étude prospective <button aria-label="Retirer"><i data-lucide="x" style="width:11px;height:11px"></i></button></span>
+      <span class="active-filter">Enquête de branche <button aria-label="Retirer"><i data-lucide="x" style="width:11px;height:11px"></i></button></span>
+      <span class="active-filter">Assurance <button aria-label="Retirer"><i data-lucide="x" style="width:11px;height:11px"></i></button></span>
+      <span class="active-filter">Année 2026 <button aria-label="Retirer"><i data-lucide="x" style="width:11px;height:11px"></i></button></span>
+      <span class="active-filter">« compétences » <button aria-label="Retirer"><i data-lucide="x" style="width:11px;height:11px"></i></button></span>
+    </div>
+
+    <div class="etudes-grid">
+
+      <a href="#" class="card-etude">
+        <div class="cover" data-letter="P">
+          <div class="cover-year">N°26.04 · Avril 2026</div>
+          <div class="cover-kind"><i data-lucide="telescope" style="width:13px;height:13px"></i>Prospective</div>
+        </div>
+        <div class="body">
+          <span class="branch-tag">Assurance · IDCC 1672</span>
+          <h3>Métiers de l'industrie et transition écologique — horizon 2035</h3>
+          <p class="abstract">Cartographie des évolutions des compétences attendues dans les branches face aux enjeux de décarbonation, d'économie circulaire et d'adaptation climatique.</p>
+          <div class="actions">
+            <span class="file-btn"><i data-lucide="file-text" style="width:11px;height:11px"></i> PDF · 84 p.</span>
+            <span class="file-btn"><i data-lucide="sheet" style="width:11px;height:11px"></i> Excel</span>
+          </div>
+        </div>
+      </a>
+
+      <a href="#" class="card-etude">
+        <div class="cover purple" data-letter="E">
+          <div class="cover-year">N°26.03 · Mars 2026</div>
+          <div class="cover-kind"><i data-lucide="users" style="width:13px;height:13px"></i>Enquête</div>
+        </div>
+        <div class="body">
+          <span class="branch-tag">Assurance · IDCC 1672</span>
+          <h3>Les compétences relationnelles dans la vente d'assurance en 2030</h3>
+          <p class="abstract">Troisième volet de la série IMAGINE : recomposition du métier commercial face à la digitalisation et à la montée des attentes sociétales des clients.</p>
+          <div class="actions">
+            <span class="file-btn"><i data-lucide="file-text" style="width:11px;height:11px"></i> PDF · 62 p.</span>
+            <span class="file-btn"><i data-lucide="sheet" style="width:11px;height:11px"></i> Excel</span>
+            <span class="file-btn"><i data-lucide="scroll-text" style="width:11px;height:11px"></i> Synthèse</span>
+          </div>
+        </div>
+      </a>
+
+      <a href="#" class="card-etude">
+        <div class="cover deep" data-letter="I">
+          <div class="cover-year">N°26.02 · Fév. 2026</div>
+          <div class="cover-kind"><i data-lucide="telescope" style="width:13px;height:13px"></i>Prospective</div>
+        </div>
+        <div class="body">
+          <span class="branch-tag">Transverse Atlas</span>
+          <h3>IA générative et métiers de service — 26 compétences clés en 2030</h3>
+          <p class="abstract">Étude conjointe avec Colombus Consulting sur l'impact de l'IA générative dans les branches financières et de conseil. Identification des compétences émergentes.</p>
+          <div class="actions">
+            <span class="file-btn"><i data-lucide="file-text" style="width:11px;height:11px"></i> PDF · 104 p.</span>
+            <span class="file-btn"><i data-lucide="sheet" style="width:11px;height:11px"></i> Excel</span>
+          </div>
+        </div>
+      </a>
+
+      <a href="#" class="card-etude">
+        <div class="cover olive" data-letter="R">
+          <div class="cover-year">N°25.11 · Nov. 2025</div>
+          <div class="cover-kind"><i data-lucide="refresh-ccw" style="width:13px;height:13px"></i>Enquête</div>
+        </div>
+        <div class="body">
+          <span class="branch-tag">Assurance · IDCC 1672</span>
+          <h3>Reconversions professionnelles dans la branche : profils et trajectoires</h3>
+          <p class="abstract">Analyse quantitative et qualitative des parcours de reconversion observés sur 2020-2025 : facteurs de réussite, freins et dispositifs mobilisés.</p>
+          <div class="actions">
+            <span class="file-btn"><i data-lucide="file-text" style="width:11px;height:11px"></i> PDF · 52 p.</span>
+            <span class="file-btn"><i data-lucide="sheet" style="width:11px;height:11px"></i> Excel</span>
+          </div>
+        </div>
+      </a>
+
+      <a href="#" class="card-etude">
+        <div class="cover" data-letter="D">
+          <div class="cover-year">N°25.10 · Oct. 2025</div>
+          <div class="cover-kind"><i data-lucide="heart-handshake" style="width:13px;height:13px"></i>Enquête</div>
+        </div>
+        <div class="body">
+          <span class="branch-tag">Assurance · IDCC 1672</span>
+          <h3>Diagnostic handicap : état des lieux dans la branche assurance</h3>
+          <p class="abstract">Diagnostic branche cofinancé avec l'Agefiph sur l'emploi des personnes en situation de handicap. Plan d'action et recommandations opérationnelles.</p>
+          <div class="actions">
+            <span class="file-btn"><i data-lucide="file-text" style="width:11px;height:11px"></i> PDF · 48 p.</span>
+            <span class="file-btn"><i data-lucide="scroll-text" style="width:11px;height:11px"></i> Synthèse</span>
+          </div>
+        </div>
+      </a>
+
+      <a href="#" class="card-etude">
+        <div class="cover purple" data-letter="C">
+          <div class="cover-year">N°25.09 · Sept. 2025</div>
+          <div class="cover-kind"><i data-lucide="shield" style="width:13px;height:13px"></i>Prospective</div>
+        </div>
+        <div class="body">
+          <span class="branch-tag">Transverse Atlas</span>
+          <h3>Cybersécurité dans les services financiers : compétences 2025-2028</h3>
+          <p class="abstract">Cadrage Atlas adossé à l'étude OPIIEC. Quatre familles métiers identifiées : détection, audit, pilotage, conception. Focus soft skills.</p>
+          <div class="actions">
+            <span class="file-btn"><i data-lucide="file-text" style="width:11px;height:11px"></i> PDF · 72 p.</span>
+            <span class="file-btn"><i data-lucide="sheet" style="width:11px;height:11px"></i> Excel</span>
+          </div>
+        </div>
+      </a>
+
+      <a href="#" class="card-etude">
+        <div class="cover olive" data-letter="F">
+          <div class="cover-year">N°25.07 · Juil. 2025</div>
+          <div class="cover-kind"><i data-lucide="graduation-cap" style="width:13px;height:13px"></i>Enquête</div>
+        </div>
+        <div class="body">
+          <span class="branch-tag">Assurance · IDCC 1672</span>
+          <h3>Les compétences clés des actuaires en 2030</h3>
+          <p class="abstract">Évolution du métier d'actuaire avec la montée en puissance des data sciences, du climate risk et de l'actuariat non-vie personnalisé.</p>
+          <div class="actions">
+            <span class="file-btn"><i data-lucide="file-text" style="width:11px;height:11px"></i> PDF · 68 p.</span>
+            <span class="file-btn"><i data-lucide="sheet" style="width:11px;height:11px"></i> Excel</span>
+          </div>
+        </div>
+      </a>
+
+      <a href="#" class="card-etude">
+        <div class="cover deep" data-letter="J">
+          <div class="cover-year">N°25.05 · Mai 2025</div>
+          <div class="cover-kind"><i data-lucide="briefcase" style="width:13px;height:13px"></i>Enquête</div>
+        </div>
+        <div class="body">
+          <span class="branch-tag">Assurance · IDCC 1672</span>
+          <h3>Les jeunes diplômés et l'assurance : baromètre d'attractivité 2025</h3>
+          <p class="abstract">Enquête auprès de 2 400 étudiants sur la perception du secteur de l'assurance comme employeur. Freins, leviers, reco branche.</p>
+          <div class="actions">
+            <span class="file-btn"><i data-lucide="file-text" style="width:11px;height:11px"></i> PDF · 40 p.</span>
+            <span class="file-btn"><i data-lucide="sheet" style="width:11px;height:11px"></i> Excel</span>
+          </div>
+        </div>
+      </a>
+
+      <a href="#" class="card-etude">
+        <div class="cover" data-letter="M">
+          <div class="cover-year">N°25.03 · Mars 2025</div>
+          <div class="cover-kind"><i data-lucide="telescope" style="width:13px;height:13px"></i>Prospective</div>
+        </div>
+        <div class="body">
+          <span class="branch-tag">Assurance · IDCC 1672</span>
+          <h3>Manager de proximité en assurance : transformation du rôle à horizon 2028</h3>
+          <p class="abstract">Évolution du management intermédiaire face au travail hybride, à l'automatisation et aux enjeux RSE. 14 scénarios types.</p>
+          <div class="actions">
+            <span class="file-btn"><i data-lucide="file-text" style="width:11px;height:11px"></i> PDF · 58 p.</span>
+            <span class="file-btn"><i data-lucide="scroll-text" style="width:11px;height:11px"></i> Synthèse</span>
+          </div>
+        </div>
+      </a>
+
+    </div>
+
+    <!-- PAGINATION -->
+    <nav class="pagination" aria-label="Pagination">
+      <button class="page-btn" disabled><i data-lucide="chevron-left" style="width:14px;height:14px"></i> Préc.</button>
+      <button class="page-btn active">1</button>
+      <button class="page-btn">2</button>
+      <span class="page-ellipsis">…</span>
+      <button class="page-btn">4</button>
+      <button class="page-btn">Suiv. <i data-lucide="chevron-right" style="width:14px;height:14px"></i></button>
+    </nav>
+  </main>
+</div>
+
+<!-- FOOTER -->
+<footer class="footer-mini">
+  <div class="footer-mini-inner">
+    <span>© 2026 Observatoire Prospective Atlas · 36 études publiées · Licence ouverte Etalab 2.0</span>
+    <span>API publique · <a href="#" style="color:var(--green); font-weight:600;">Flux RSS</a> · <a href="#" style="color:var(--green); font-weight:600;">Contact</a></span>
+  </div>
+</footer>
+
+<script>
+  lucide.createIcons();
+
+  // Year pills
+  document.querySelectorAll('.filter-year-pill').forEach(p => {
+    p.addEventListener('click', () => {
+      document.querySelectorAll('.filter-year-pill').forEach(x => x.classList.remove('active'));
+      p.classList.add('active');
+    });
+  });
+
+  // View toggle
+  document.querySelectorAll('.view-btn').forEach(b => {
+    b.addEventListener('click', () => {
+      document.querySelectorAll('.view-btn').forEach(x => x.classList.remove('active'));
+      b.classList.add('active');
+    });
+  });
+</script>
+</body>
+</html>

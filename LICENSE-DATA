@@ -1,0 +1,81 @@
+LICENCE OUVERTE / OPEN LICENCE — version 2.0
+
+© 2026 OPCO Atlas — Observatoire Prospective Atlas
+
+Ce fichier décrit la licence applicable aux DONNÉES publiées par
+l'Observatoire Prospective Atlas via son site web et son API publique :
+fiches métiers, référentiel de compétences, études, rapports, baromètres,
+indicateurs statistiques et jeux de données associés.
+
+La licence applicable est la LICENCE OUVERTE ETALAB 2.0, licence standard
+utilisée par l'administration française pour l'ouverture des données publiques.
+
+═══════════════════════════════════════════════════════════════════════════
+DROITS ACCORDÉS AU RÉUTILISATEUR
+═══════════════════════════════════════════════════════════════════════════
+
+Le producteur concède au réutilisateur un droit non exclusif et gratuit de
+libre "Réutilisation" de l'"Information" objet de la présente licence,
+dans le monde entier et pour une durée illimitée, dans les conditions
+exprimées ci-dessous.
+
+Le réutilisateur est libre de réutiliser l'"Information" :
+
+  • de la reproduire, la copier ;
+  • de l'adapter, la modifier, l'extraire et la transformer, pour créer
+    des "Informations dérivées", des produits ou des services ;
+  • de la communiquer, la diffuser, la redistribuer, la publier et la
+    transmettre ;
+  • de l'exploiter à titre commercial, par exemple en la combinant avec
+    d'autres "Informations", ou en l'incluant dans son propre produit
+    ou application.
+
+Sous réserve de mentionner la paternité de l'"Information" :
+sa source (a minima le nom du "Producteur") et la date de sa dernière
+mise à jour.
+
+═══════════════════════════════════════════════════════════════════════════
+MENTION À FAIRE FIGURER
+═══════════════════════════════════════════════════════════════════════════
+
+Mention suggérée :
+
+    « Source : Observatoire Prospective Atlas — OPCO Atlas
+      https://observatoire-atlas.fr (licence Etalab 2.0)
+      Données mises à jour le [DATE] »
+
+═══════════════════════════════════════════════════════════════════════════
+TEXTE OFFICIEL COMPLET
+═══════════════════════════════════════════════════════════════════════════
+
+Le texte officiel intégral de la Licence Ouverte 2.0 est disponible sur :
+https://www.etalab.gouv.fr/licence-ouverte-open-licence/
+
+Ce fichier est un extrait informatif. En cas de divergence, c'est le texte
+officiel sur le site d'Etalab qui fait foi.
+
+═══════════════════════════════════════════════════════════════════════════
+PÉRIMÈTRE
+═══════════════════════════════════════════════════════════════════════════
+
+Cette licence s'applique aux :
+
+  ✓ Fiches métiers publiées (libellés, descriptions, compétences associées)
+  ✓ Études, rapports, baromètres, notes de synthèse
+  ✓ Jeux de données quantitatifs (effectifs, tensions, indicateurs)
+  ✓ API JSON publique de l'Observatoire
+
+Elle ne s'applique PAS aux :
+
+  ✗ Éléments graphiques protégés (logos OPCO Atlas, identité visuelle)
+  ✗ Données personnelles (aucune n'est publiée par l'Observatoire)
+  ✗ Contenus tiers cités en source (France Travail, INSEE, etc. — chaque
+    source conserve ses propres conditions, généralement Etalab 2.0 aussi)
+  ✗ Code source du site — voir fichier LICENSE (MIT)
+
+═══════════════════════════════════════════════════════════════════════════
+CONTACT
+═══════════════════════════════════════════════════════════════════════════
+
+Pour toute question sur la réutilisation des données :
+contact@observatoire-atlas.fr (ou adresse définitive à la publication)

@@ -1,0 +1,153 @@
+@import "tailwindcss";
+
+/* ═══════════════════════════════════════════════════════════════
+   Charte Prospective Atlas — tokens DESIGN.md
+   Tailwind v4 : tout est défini dans @theme, pas de tailwind.config
+   ═══════════════════════════════════════════════════════════════ */
+
+@theme {
+  /* ─── Fontes (chargées par next/font dans layout.tsx) ──────── */
+  --font-display: var(--font-outfit), "Circular Std", "Helvetica Neue", sans-serif;
+  --font-body: var(--font-dm-sans), -apple-system, "Helvetica Neue", sans-serif;
+  --font-mono: var(--font-jetbrains), "JetBrains Mono", "SF Mono", monospace;
+
+  /* ─── Palette Atlas ───────────────────────────────────────── */
+  --color-atlas-purple: #2D0F64;
+  --color-atlas-purple-lt: #EEE8FA;
+  --color-atlas-green: #004423;
+  /* Vert vif — réservé aux FONDS clairs/décoratifs et au texte SUR FOND SOMBRE uniquement.
+     Ne jamais utiliser pour du texte sur fond blanc (contraste 2.49 — fail WCAG AA). */
+  --color-atlas-green-v: #5FB670;
+  /* Vert accent — utilisé pour le TEXTE d'accent sur fond blanc/clair.
+     Contraste sur blanc : 4.04:1 (AA normal & AA large pass). */
+  --color-atlas-accent: #2E8349;
+  --color-atlas-green-lt: #EAF5ED;
+  --color-atlas-green-tag: #E8F7EC;
+
+  /* ─── Neutres ─────────────────────────────────────────────── */
+  --color-ink: #1A1A1A;
+  --color-ink-2: #3A3A3A;
+  --color-muted: #6B6868;
+  --color-muted-2: #9A9794;
+  --color-off: #F7F6F3;
+  --color-border: #E2E0DB;
+  --color-border-soft: #EFEDE7;
+
+  /* ─── Sémantique secondaire (teintes ASSOMBRIES pour AA) ───── */
+  /* Texte #A52E1F sur fond #FBEDEB = 6.3:1 — AA pass */
+  --color-tension: #A52E1F;
+  --color-tension-bg: #FBEDEB;
+  /* Texte #8F5117 sur fond #FBF1E4 = 6.0:1 — AA pass */
+  --color-emergent: #8F5117;
+  --color-emergent-bg: #FBF1E4;
+  --color-atlas-blue: #2D6BAA;
+
+  /* ─── Radii ───────────────────────────────────────────────── */
+  --radius-sm: 10px;
+  --radius-md: 16px;
+  --radius-lg: 20px;
+  --radius-pill: 2rem;
+
+  /* ─── Ombres vertes douces ────────────────────────────────── */
+  --shadow-card: 0 4px 20px rgba(0, 68, 35, 0.06);
+  --shadow-event: 0 4px 24px rgba(0, 68, 35, 0.08);
+  --shadow-hover: 0 12px 40px rgba(0, 68, 35, 0.12);
+
+  /* ─── Défauts de bordure pour que "border" utilise notre token ─── */
+  --default-border-color: var(--color-border);
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   Styles globaux
+   ═══════════════════════════════════════════════════════════════ */
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: #ffffff;
+  color: var(--color-ink);
+  font-family: var(--font-body);
+  line-height: 1.65;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+/* Focus ring accessible */
+:focus-visible {
+  outline: 2px solid var(--color-atlas-green-v);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* Sélection */
+::selection {
+  background: var(--color-atlas-green-lt);
+  color: var(--color-atlas-green);
+}
+
+/* Scrollbar discrète */
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: var(--color-off); }
+::-webkit-scrollbar-thumb { background: var(--color-border); border-radius: 5px; border: 2px solid var(--color-off); }
+::-webkit-scrollbar-thumb:hover { background: var(--color-muted-2); }
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   Utilitaires signature — styles non-atomiques
+   (on garde Tailwind pour l'essentiel, mais quelques patterns
+    répétés méritent leur classe)
+   ═══════════════════════════════════════════════════════════════ */
+
+/* Hero vert avec lettre fantôme (signature HORIZONS) */
+.ghost-letter {
+  position: absolute;
+  font-family: var(--font-display);
+  font-weight: 800;
+  line-height: 1;
+  color: rgba(255, 255, 255, 0.04);
+  pointer-events: none;
+  user-select: none;
+}
+
+/* Animation barre */
+@keyframes growBar {
+  from { transform: scaleX(0); }
+  to { transform: scaleX(1); }
+}
+.bar-fill-animated {
+  transform-origin: left;
+  animation: growBar 1s cubic-bezier(0.4, 0, 0.2, 1) both;
+}
+
+/* Fade-up scroll reveal */
+.fade-up {
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity 0.65s cubic-bezier(0.4, 0, 0.2, 1), transform 0.65s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.fade-up.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Live dot pulsant */
+@keyframes pulse-dot {
+  0%, 100% { box-shadow: 0 0 0 4px rgba(95, 182, 112, 0.2); }
+  50% { box-shadow: 0 0 0 8px rgba(95, 182, 112, 0.05); }
+}
+.live-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--color-atlas-green-v);
+  animation: pulse-dot 2s infinite;
+}

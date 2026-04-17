@@ -1,0 +1,126 @@
+# ════════════════════════════════════════════════════════════════════════════
+# Stack CMS Observatoire Prospective Atlas
+#   · Directus : admin UI + API REST/GraphQL (port 8055)
+#   · Postgres : base de données (port 5432)
+#   · Redis    : cache Directus (port 6379)
+#   · Meilisearch : recherche plein-texte française (port 7700)
+# ════════════════════════════════════════════════════════════════════════════
+# Démarrage :
+#   1. Copier .env.example en .env et remplir les mots de passe
+#   2. docker compose up -d
+#   3. Admin Directus : http://localhost:8055 (admin@observatoire-atlas.fr / mot de passe du .env)
+#   4. Meilisearch : http://localhost:7700 (master key du .env)
+
+services:
+  postgres:
+    image: postgis/postgis:16-3.4
+    container_name: observatoire-pg
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${DB_USER:-observatoire}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:?DB_PASSWORD is required}
+      POSTGRES_DB: ${DB_NAME:-observatoire}
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-observatoire} -d ${DB_NAME:-observatoire}"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  redis:
+    image: redis:7-alpine
+    container_name: observatoire-redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  directus:
+    image: directus/directus:11
+    container_name: observatoire-directus
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    environment:
+      KEY: ${DIRECTUS_KEY:?DIRECTUS_KEY is required}
+      SECRET: ${DIRECTUS_SECRET:?DIRECTUS_SECRET is required}
+      PUBLIC_URL: ${PUBLIC_URL:-http://localhost:8055}
+
+      # Admin bootstrap (à la première exécution uniquement)
+      ADMIN_EMAIL: ${ADMIN_EMAIL:-admin@observatoire-atlas.fr}
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD:?ADMIN_PASSWORD is required}
+
+      # Base
+      DB_CLIENT: pg
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_DATABASE: ${DB_NAME:-observatoire}
+      DB_USER: ${DB_USER:-observatoire}
+      DB_PASSWORD: ${DB_PASSWORD}
+
+      # Cache
+      CACHE_ENABLED: "true"
+      CACHE_STORE: redis
+      REDIS: redis://redis:6379
+
+      # Stockage : local par défaut, pour le MVP
+      # Passer à S3 via STORAGE_LOCATIONS=s3 en prod (Scaleway Object Storage)
+      STORAGE_LOCATIONS: local
+      STORAGE_LOCAL_DRIVER: local
+      STORAGE_LOCAL_ROOT: /directus/uploads
+
+      # CORS : autoriser le front Next.js
+      CORS_ENABLED: "true"
+      CORS_ORIGIN: ${CORS_ORIGIN:-http://localhost:3000}
+      CORS_METHODS: "GET,POST,PATCH,DELETE"
+      CORS_CREDENTIALS: "true"
+
+      # Rate limiting (protection basique)
+      RATE_LIMITER_ENABLED: "true"
+      RATE_LIMITER_POINTS: 100
+      RATE_LIMITER_DURATION: 1
+
+      # Sécurité session
+      ACCESS_TOKEN_TTL: 15m
+      REFRESH_TOKEN_TTL: 7d
+      REFRESH_TOKEN_COOKIE_SAME_SITE: lax
+      REFRESH_TOKEN_COOKIE_SECURE: "false"  # passer à true en prod HTTPS
+
+      # Observabilité
+      LOG_LEVEL: info
+      TELEMETRY: "false"
+    volumes:
+      - directus_uploads:/directus/uploads
+      - directus_extensions:/directus/extensions
+      - ./snapshots:/directus/snapshots  # pour versionner le schéma
+    ports:
+      - "8055:8055"
+
+  meilisearch:
+    image: getmeili/meilisearch:v1.12
+    container_name: observatoire-meili
+    restart: unless-stopped
+    environment:
+      MEILI_MASTER_KEY: ${MEILI_MASTER_KEY:?MEILI_MASTER_KEY is required}
+      MEILI_ENV: ${MEILI_ENV:-development}
+      MEILI_NO_ANALYTICS: "true"
+    volumes:
+      - meili_data:/meili_data
+    ports:
+      - "7700:7700"
+
+volumes:
+  pg_data:
+  directus_uploads:
+  directus_extensions:
+  meili_data:
