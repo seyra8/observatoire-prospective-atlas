@@ -1,0 +1,75 @@
+# ════════════════════════════════════════════════════════════════════════════
+# Dependabot — mises à jour automatiques des dépendances
+# ════════════════════════════════════════════════════════════════════════════
+# Ouvre automatiquement des PR quand :
+#   • une dépendance a une vulnérabilité de sécurité (CVE)
+#   • une dépendance a une nouvelle version stable
+# Les PR passent la CI → tu review → merge si OK. Zéro effort.
+# ════════════════════════════════════════════════════════════════════════════
+
+version: 2
+
+updates:
+
+  # ─── Front Next.js ────────────────────────────────────────
+  - package-ecosystem: "npm"
+    directory: "/web"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "04:00"
+      timezone: "Europe/Paris"
+    open-pull-requests-limit: 5
+    commit-message:
+      prefix: "chore(deps)"
+      include: "scope"
+    labels:
+      - "dependencies"
+      - "web"
+    # Groupe les mises à jour mineures/patch ensemble (moins de bruit)
+    groups:
+      minor-and-patch:
+        applies-to: version-updates
+        update-types:
+          - "minor"
+          - "patch"
+      security:
+        applies-to: security-updates
+        patterns:
+          - "*"
+    # Ignore les montées de version majeure auto (à faire manuellement)
+    ignore:
+      - dependency-name: "next"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "react"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "react-dom"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "tailwindcss"
+        update-types: ["version-update:semver-major"]
+
+  # ─── GitHub Actions ───────────────────────────────────────
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "monthly"
+      day: "monday"
+      time: "04:00"
+      timezone: "Europe/Paris"
+    open-pull-requests-limit: 3
+    commit-message:
+      prefix: "chore(ci)"
+    labels:
+      - "dependencies"
+      - "ci"
+
+  # ─── CMS Directus (quand docker-compose sera déployé) ────
+  # Décommenter quand cms/ contient un Dockerfile ou package.json
+  # - package-ecosystem: "docker"
+  #   directory: "/cms"
+  #   schedule:
+  #     interval: "weekly"
+  #   open-pull-requests-limit: 3
+  #   labels:
+  #     - "dependencies"
+  #     - "cms"

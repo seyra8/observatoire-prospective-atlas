@@ -1,0 +1,80 @@
+# ════════════════════════════════════════════════════════════════════════════
+# A11Y — Audit accessibilité automatique (axe-core)
+# ════════════════════════════════════════════════════════════════════════════
+# Se déclenche :
+#   • sur chaque PR vers main (vérif avant merge)
+#   • 1× par jour (drift check : détecte les régressions a11y sur la prod)
+# Lance axe-core sur les 4 pages principales via Playwright.
+# Échoue si 1+ violation sévère (serious ou critical).
+# ════════════════════════════════════════════════════════════════════════════
+
+name: Accessibility audit
+
+on:
+  pull_request:
+    branches: [main]
+  schedule:
+    # Tous les jours à 06:00 UTC (08:00 Paris) pour détecter dérive
+    - cron: '0 6 * * *'
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  axe:
+    name: axe-core audit
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    defaults:
+      run:
+        working-directory: web
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: 'npm'
+          cache-dependency-path: web/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build Next.js
+        run: npm run build
+        env:
+          NEXT_TELEMETRY_DISABLED: 1
+
+      - name: Start Next.js en arrière-plan
+        run: |
+          npm start &
+          # Attendre que le serveur réponde sur 3000
+          npx wait-on http://localhost:3000 --timeout 60000
+        env:
+          PORT: 3000
+
+      - name: Installer @axe-core/cli
+        run: npm install --no-save @axe-core/cli
+
+      - name: Audit axe sur les pages principales
+        run: |
+          npx axe \
+            http://localhost:3000/ \
+            http://localhost:3000/metiers \
+            http://localhost:3000/etudes \
+            http://localhost:3000/dataviz \
+            http://localhost:3000/accessibilite \
+            http://localhost:3000/methodologie \
+            --exit \
+            --tags wcag2a,wcag2aa,wcag21a,wcag21aa \
+            --disable color-contrast
+
+      # Note sur --disable color-contrast :
+      # axe-cli utilise un headless qui peut mal calculer les contrastes sur
+      # les couleurs dynamiques (bg-atlas-*). Les contrastes sont déjà
+      # validés manuellement dans A11Y.md. On peut réactiver après avoir
+      # vérifié que les calculs CI sont fiables.

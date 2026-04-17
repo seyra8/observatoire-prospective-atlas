@@ -1,0 +1,100 @@
+# ════════════════════════════════════════════════════════════════════════════
+# CI — Observatoire Prospective Atlas
+# ════════════════════════════════════════════════════════════════════════════
+# Se déclenche sur :
+#   • chaque push sur main
+#   • chaque pull request vers main
+# Vérifie :
+#   • TypeScript compile sans erreur
+#   • Le projet Next.js build correctement
+#   • Aucune vulnérabilité critique dans les dépendances
+# ════════════════════════════════════════════════════════════════════════════
+
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  # Permet de relancer manuellement depuis l'UI GitHub
+  workflow_dispatch:
+
+# Annule automatiquement les runs précédents sur la même branche/PR
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+
+  # ──────────────────────────────────────────────────────────────
+  # Job 1 · Typecheck + build Next.js
+  # ──────────────────────────────────────────────────────────────
+  build:
+    name: Build & typecheck
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    defaults:
+      run:
+        working-directory: web
+
+    steps:
+      - name: Checkout du code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: 'npm'
+          cache-dependency-path: web/package-lock.json
+
+      - name: Installation des dépendances
+        run: npm ci
+
+      - name: Vérification TypeScript
+        run: npm run typecheck
+
+      - name: Build Next.js production
+        run: npm run build
+        env:
+          # Indique que c'est un build CI (pas de télémétrie)
+          NEXT_TELEMETRY_DISABLED: 1
+
+      - name: Upload build artifacts (debug)
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: next-build-logs
+          path: |
+            web/.next/trace
+            web/.next/build-manifest.json
+          retention-days: 3
+
+  # ──────────────────────────────────────────────────────────────
+  # Job 2 · Audit sécurité des dépendances
+  # ──────────────────────────────────────────────────────────────
+  security:
+    name: Security audit
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    defaults:
+      run:
+        working-directory: web
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: 'npm'
+          cache-dependency-path: web/package-lock.json
+
+      - name: npm audit (bloque si faille 'high' ou plus)
+        run: npm audit --audit-level=high
+        # On ne bloque pas la CI sur les vulnérabilités moderate
+        # Dependabot ouvrira une PR automatique pour les corriger
+        continue-on-error: false
