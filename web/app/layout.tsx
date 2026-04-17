@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import { Outfit, DM_Sans, JetBrains_Mono } from "next/font/google";
+import { Analytics } from "@vercel/analytics/next";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 import "./globals.css";
 import { Nav } from "@/components/layout/nav";
 import { Footer } from "@/components/layout/footer";
@@ -60,6 +62,10 @@ export default function RootLayout({
           </main>
           <Footer />
         </CommandPaletteProvider>
+        {/* Vercel Web Analytics — RGPD compliant, no cookies, free on Hobby (2500 events/month) */}
+        <Analytics />
+        {/* Vercel Speed Insights — Core Web Vitals en temps réel, free on Hobby */}
+        <SpeedInsights />
       </body>
     </html>
   );

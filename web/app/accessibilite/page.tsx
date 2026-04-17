@@ -142,6 +142,27 @@ export default function AccessibilitePage() {
           </section>
 
           <section>
+            <Pill>Analytics · données collectées</Pill>
+            <h2 className="mt-3 font-display text-[1.6rem] font-extrabold leading-tight text-atlas-green">
+              Respect de votre vie privée
+            </h2>
+            <p className="mt-3">
+              L'Observatoire utilise <strong>Vercel Web Analytics</strong> pour mesurer la fréquentation
+              du site. Cet outil est conforme RGPD par conception :
+            </p>
+            <ul className="mt-2 list-disc pl-6">
+              <li>Aucun cookie n'est déposé sur votre appareil</li>
+              <li>Aucune donnée personnelle identifiante n'est collectée (pas d'adresse IP stockée, pas de fingerprinting)</li>
+              <li>Les données agrégées (pages vues, pays, appareil) sont hébergées dans l'UE</li>
+              <li>Aucune donnée n'est transmise à des tiers publicitaires</li>
+            </ul>
+            <p className="mt-3 text-[0.92rem] text-muted">
+              C'est pour cette raison que le site ne présente <strong>pas de bannière cookies</strong> :
+              il n'y a rien à consentir.
+            </p>
+          </section>
+
+          <section>
             <Pill variant="purple">Contact</Pill>
             <h2 className="mt-3 font-display text-[1.6rem] font-extrabold leading-tight text-atlas-green">
               Signaler un problème
