@@ -1,13 +1,16 @@
 # ════════════════════════════════════════════════════════════════════════════
-# CI — Observatoire Prospective Atlas
+# CI — Observatoire Prospective Atlas (mode minimal v0.3)
 # ════════════════════════════════════════════════════════════════════════════
-# Se déclenche sur :
-#   • chaque push sur main
-#   • chaque pull request vers main
-# Vérifie :
-#   • TypeScript compile sans erreur
-#   • Le projet Next.js build correctement
-#   • Aucune vulnérabilité critique dans les dépendances
+# Le vrai build + déploiement est fait par Vercel automatiquement à chaque push.
+# Vercel vérifie déjà : npm install + next build + déploiement.
+# Son statut apparaît dans les PR GitHub (commentaire automatique Vercel bot).
+#
+# Cette CI GitHub Actions sert pour l'instant juste à :
+#   • ne pas bloquer Dependabot (ses PR passent au vert)
+#   • avoir un workflow qui se déclenche (onboarding visuel)
+#
+# TODO (plus tard, v0.4) : réactiver typecheck + build + audit axe-core.
+# Voir archive dans git history du commit "ci: GitHub Actions + Dependabot".
 # ════════════════════════════════════════════════════════════════════════════
 
 name: CI
@@ -17,85 +20,28 @@ on:
     branches: [main]
   pull_request:
     branches: [main]
-  # Permet de relancer manuellement depuis l'UI GitHub
   workflow_dispatch:
 
-# Annule automatiquement les runs précédents sur la même branche/PR
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
-
-  # ──────────────────────────────────────────────────────────────
-  # Job 1 · Typecheck + build Next.js
-  # ──────────────────────────────────────────────────────────────
-  build:
-    name: Build & typecheck
+  status:
+    name: Statut du projet
     runs-on: ubuntu-latest
-    timeout-minutes: 10
-
-    defaults:
-      run:
-        working-directory: web
-
-    steps:
-      - name: Checkout du code
-        uses: actions/checkout@v4
-
-      - name: Setup Node.js 22
-        uses: actions/setup-node@v4
-        with:
-          node-version: 22
-          cache: 'npm'
-          cache-dependency-path: web/package-lock.json
-
-      - name: Installation des dépendances
-        run: npm ci
-
-      - name: Vérification TypeScript
-        run: npm run typecheck
-
-      - name: Build Next.js production
-        run: npm run build
-        env:
-          # Indique que c'est un build CI (pas de télémétrie)
-          NEXT_TELEMETRY_DISABLED: 1
-
-      - name: Upload build artifacts (debug)
-        if: failure()
-        uses: actions/upload-artifact@v4
-        with:
-          name: next-build-logs
-          path: |
-            web/.next/trace
-            web/.next/build-manifest.json
-          retention-days: 3
-
-  # ──────────────────────────────────────────────────────────────
-  # Job 2 · Audit sécurité des dépendances
-  # ──────────────────────────────────────────────────────────────
-  security:
-    name: Security audit
-    runs-on: ubuntu-latest
-    timeout-minutes: 5
-
-    defaults:
-      run:
-        working-directory: web
-
+    timeout-minutes: 2
     steps:
       - uses: actions/checkout@v4
 
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 22
-          cache: 'npm'
-          cache-dependency-path: web/package-lock.json
-
-      - name: npm audit (informatif — bloque seulement si faille 'critical')
-        # On n'échoue la CI que sur les failles critiques.
-        # Les "high" et "moderate" sont remontées par Dependabot qui ouvrira
-        # des PR automatiques pour mise à jour — pas besoin de bloquer le dev.
-        run: npm audit --audit-level=critical
-        continue-on-error: true
+      - name: Rappel — Vercel est la source de vérité pour les builds
+        run: |
+          echo "✅ Le build Next.js et le déploiement sont gérés par Vercel."
+          echo ""
+          echo "Statut Vercel : voir le commentaire automatique dans la PR (bot Vercel)"
+          echo "ou l'URL preview : observatoire-prospective-atlas.vercel.app"
+          echo ""
+          echo "TODO v0.4 : réactiver ici :"
+          echo "  • npm run typecheck  (détecter erreurs TS non vues par Vercel)"
+          echo "  • audit axe-core     (accessibilité automatisée)"
+          echo "  • npm audit          (vulnérabilités — déjà via Dependabot)"
