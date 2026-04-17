@@ -53,6 +53,14 @@ export function CommandPalette({ open, onOpenChange }: CommandPaletteProps) {
         keywords: ["home", "accueil"],
       },
       {
+        id: "nav-branches",
+        group: "Navigation",
+        label: "Branches professionnelles",
+        icon: Briefcase,
+        action: () => router.push("/branches"),
+        keywords: ["branches", "secteurs", "assurance", "banque", "conseil", "comptable"],
+      },
+      {
         id: "nav-metiers",
         group: "Navigation",
         label: "Fiches métiers",
@@ -75,6 +83,14 @@ export function CommandPalette({ open, onOpenChange }: CommandPaletteProps) {
         icon: TrendingUp,
         action: () => router.push("/dataviz"),
         keywords: ["data", "stats", "tension"],
+      },
+      {
+        id: "nav-evenements",
+        group: "Navigation",
+        label: "Événements & Matinales",
+        icon: Sparkles,
+        action: () => router.push("/evenements"),
+        keywords: ["événements", "matinale", "webinaire", "agenda", "colloque", "replay"],
       },
     ];
 

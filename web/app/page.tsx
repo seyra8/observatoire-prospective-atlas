@@ -4,7 +4,20 @@ import { HeroPill, Pill } from "@/components/ui/pill";
 import { SectionHead } from "@/components/ui/card";
 import { MetierCard } from "@/components/metier-card";
 import { StudyCard } from "@/components/study-card";
-import { heroStats, metiersTopTrimestre, studiesRecentes } from "@/lib/mock-data";
+import { NewsCarousel } from "@/components/news-carousel";
+import {
+  actualites,
+  branchesDetails,
+  heroStats,
+  metiersTopTrimestre,
+  studiesRecentes,
+} from "@/lib/mock-data";
+
+function formatEffectifsShort(n: number): string {
+  if (n >= 1000000) return `${(n / 1000000).toFixed(1).replace(".", ",")} M`;
+  if (n >= 10000) return `${Math.round(n / 1000)} K`;
+  return n.toLocaleString("fr-FR");
+}
 
 export default function HomePage() {
   return (
@@ -91,7 +104,7 @@ export default function HomePage() {
         <div className="mx-auto max-w-[1200px]">
           <SectionHead
             eyebrow={<Pill variant="purple">02 · Bibliothèque documentaire</Pill>}
-            meta="36 études · 11 branches"
+            meta="36 études · 14 branches"
             link={{ href: "/etudes", label: "Toutes les études" }}
           >
             Études &amp; rapports —<br />
@@ -106,11 +119,75 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* ═══════ ACTUALITÉS — CARROUSEL ═══════ */}
+      <section className="px-8 py-20 lg:px-12">
+        <div className="mx-auto max-w-[1200px]">
+          <SectionHead
+            eyebrow={<Pill>03 · Actualités</Pill>}
+            meta="Signaux faibles · Publications · Décisions"
+            link={{ href: "#", label: "Toute l'actualité" }}
+          >
+            Ce qui bouge —<br />
+            <em className="not-italic text-atlas-accent">dans nos branches</em>
+          </SectionHead>
+          <NewsCarousel actualites={actualites} />
+        </div>
+      </section>
+
+      {/* ═══════ BRANCHES ATLAS ═══════ */}
+      <section className="bg-off px-8 py-20 lg:px-12">
+        <div className="mx-auto max-w-[1200px]">
+          <SectionHead
+            eyebrow={<Pill variant="purple">04 · Cartographie</Pill>}
+            meta="14 branches · 4 secteurs"
+            link={{ href: "/branches", label: "Voir toutes les branches" }}
+          >
+            Les branches —<br />
+            <em className="not-italic text-atlas-accent">accompagnées par Atlas</em>
+          </SectionHead>
+          <div
+            className="grid gap-4"
+            style={{ gridTemplateColumns: "repeat(auto-fill, minmax(240px, 1fr))" }}
+          >
+            {branchesDetails.slice(0, 8).map((b) => (
+              <a
+                key={b.code}
+                href={`/branches/${b.slug}`}
+                className="group flex items-center justify-between gap-3 rounded-md border-[1.5px] border-border bg-white p-4 transition-all hover:border-atlas-green-v hover:shadow-card"
+                aria-label={`Découvrir la branche ${b.libelle}`}
+              >
+                <div className="min-w-0 flex-1">
+                  <div className="font-display text-[0.65rem] font-bold uppercase tracking-wider text-atlas-accent">
+                    {b.idcc ? `IDCC ${b.idcc}` : "Multi-IDCC"}
+                  </div>
+                  <div className="mt-0.5 truncate font-display text-[0.95rem] font-bold leading-snug text-atlas-green">
+                    {b.libelle}
+                  </div>
+                  <div className="mt-0.5 text-[0.75rem] text-muted">
+                    {formatEffectifsShort(b.effectifsSalaries)} salariés
+                  </div>
+                </div>
+                <ArrowRight className="h-4 w-4 shrink-0 text-muted transition-all group-hover:text-atlas-green-v group-hover:translate-x-0.5" aria-hidden="true" />
+              </a>
+            ))}
+          </div>
+          <div className="mt-6 text-center">
+            <a
+              href="/branches"
+              className="inline-flex items-center gap-2 rounded-pill border-[1.5px] border-atlas-green-v bg-white px-6 py-[0.8rem] font-display text-[0.88rem] font-bold text-atlas-green transition-colors hover:bg-atlas-green-lt"
+            >
+              Voir les 14 branches
+              <ArrowRight className="h-4 w-4" aria-hidden="true" />
+            </a>
+          </div>
+        </div>
+      </section>
+
       {/* ═══════ DATAVIZ CTA ═══════ */}
       <section className="px-8 py-20 lg:px-12">
         <div className="mx-auto max-w-[1200px]">
           <SectionHead
-            eyebrow={<Pill>03 · Les données clés</Pill>}
+            eyebrow={<Pill>05 · Les données clés</Pill>}
             meta="Temps quasi-réel · T1 2026"
             link={{ href: "/dataviz", label: "Ouvrir le dashboard" }}
           >

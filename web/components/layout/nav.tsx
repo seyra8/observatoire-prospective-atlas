@@ -7,10 +7,11 @@ import { cn } from "@/lib/utils";
 import { useCommandPalette } from "@/components/command-palette-provider";
 
 const NAV_LINKS = [
+  { href: "/branches", label: "Branches" },
   { href: "/metiers", label: "Métiers" },
   { href: "/etudes", label: "Études" },
   { href: "/dataviz", label: "Data" },
-  { href: "/actualites", label: "Actualités" },
+  { href: "/evenements", label: "Événements" },
 ];
 
 export function Nav() {

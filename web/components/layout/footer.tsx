@@ -2,10 +2,11 @@ import Link from "next/link";
 
 const LINKS = {
   Explorer: [
+    { href: "/branches", label: "Branches professionnelles" },
     { href: "/metiers", label: "Fiches métiers" },
     { href: "/etudes", label: "Études & rapports" },
     { href: "/dataviz", label: "Données" },
-    { href: "/actualites", label: "Actualités" },
+    { href: "/evenements", label: "Événements" },
   ],
   Ressources: [
     { href: "/methodologie", label: "Méthodologie" },

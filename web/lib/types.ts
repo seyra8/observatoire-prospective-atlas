@@ -65,3 +65,69 @@ export interface Branche {
   effectifsSalaries: number;
   nbEntreprises: number;
 }
+
+// ════════════════════════════════════════════════════════════════════════════
+// Types enrichis pour pages de détail
+// ════════════════════════════════════════════════════════════════════════════
+
+export interface BrancheDetail extends Branche {
+  slug: string;
+  resume: string;
+  chapo: string;
+  coverLetter: string;
+  partFemmes: number;
+  ageMedian: number;
+  salaireMedian: number;
+  metiersPhares: string[];
+  etudesIds: string[];
+  tendances: { label: string; value: string; trend: "up" | "down" | "flat" }[];
+  defisProspectifs: string[];
+  gouvernance: string;
+}
+
+export interface StudyDetail extends Study {
+  chapo: string;
+  contexte: string[];
+  methodologie: { title: string; body: string }[];
+  resultatsCles: { label: string; value: string; desc: string }[];
+  recommandations: string[];
+  sources: string[];
+  auteurs: string[];
+  nbPages: number;
+  keywords: string[];
+}
+
+export type EvenementFormat = "webinaire" | "presentiel" | "hybride" | "replay";
+export type EvenementStatut = "a-venir" | "inscriptions-ouvertes" | "complet" | "passe" | "replay-disponible";
+
+export interface Evenement {
+  id: string;
+  slug: string;
+  titre: string;
+  supertag: string;
+  resume: string;
+  date: string;
+  dureeMin: number;
+  format: EvenementFormat;
+  lieu?: string;
+  statut: EvenementStatut;
+  branches: string[];
+  animateur?: { nom: string; role: string };
+  programme: { heure: string; label: string; titre: string; intervenants?: string }[];
+  replayUrl?: string;
+  coverVariant: "green" | "purple" | "olive" | "deep";
+  coverLetter: string;
+}
+
+export interface Actualite {
+  id: string;
+  titre: string;
+  chapo: string;
+  source: { nom: string; url?: string };
+  categorie: "publication" | "signal-faible" | "agenda" | "decision" | "chiffres";
+  datePubli: string;
+  branche?: string;
+  coverVariant: "green" | "purple" | "olive" | "deep" | "blue";
+  url: string;
+  duree?: string;
+}
